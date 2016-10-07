@@ -10,6 +10,10 @@ This module wraps the basic function of the Vialux dlls to control a digitial mi
 * Windows 32 or 64,
 * Vialux drivers and the ALP4.X dll files available for download on [Vialux website](http://www.vialux.de/en/).
 
+## Installation
+
+Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. The dlls have the following names respectively for the 4.1, 4.2 and 4.3 version of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'.
+
 ## A simple example
 
 ```python
