@@ -12,7 +12,7 @@ This module wraps the basic function of the Vialux dlls to control a digitial mi
 
 ## Installation
 
-Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. The dlls have the following names respectively for the 4.1, 4.2 and 4.3 version of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
+Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
 
 ## A simple example
 
