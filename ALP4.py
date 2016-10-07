@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Oct 05 15:48:53 2016
 
-@author: sebastien
+@author: Sebastien Popoff
 """
 
 import ctypes as ct
@@ -12,23 +11,7 @@ import platform
 class ALP4():
     """
     This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
-    """
-    
-    def _ImportALPLibFunctions(self):
-        '''
-        This function load the library and import the function we will used.
-        '''
-        #self._XenicsLib = ct.WinDLL("./XenethLib/xeneth64.dll")
-        #self._XenicsLib = ct.CDLL("./XenethLib/xeneth64.dll")
-        
-        ## Import AlpDevAlloc
-        self._AlpDevAlloc = self._ALPLib.AlpDevAlloc
-        # Define argument types
-#        self._AlpDevAlloc.argtypes = [ct.c_long, ct.c_long, ct.c_void_p]
-        # Define return type
-        self._AlpDevAlloc.restype = ct.c_long
-        
-
+    """    
     
     def __init__(self, version = '4.3', pathDir = './'):
         
@@ -53,12 +36,6 @@ class ALP4():
         print('Loading linrary: ' + libPath)
         self._ALPLib = ct.CDLL("./x64/alp4395.dll")   
             
-#        if ((os_type == 'Windows') and (platform.architecture()[0] == '64bit')):
-#            self._ALPLib = ct.CDLL("./x64/alp4395.dll")
-#        elif ((os_type == 'Windows') and (platform.architecture()[0] == '32bit')):
-#            self._ALPLib = ct.CDLL("./alp4395.dll")
-#        else :
-#            self._raiseError('System not supported.')
 
 
         
@@ -134,16 +111,11 @@ class ALP4():
         # Time between the incoming trigger edge and the start of the display (slave mode)
         self._triggerInDelay = self._ALP_DEFAULT
         
-        ## Load the dll
-        self._ImportALPLibFunctions()
+
         
         
     def _raiseError(self, errorString):
-        raise Exception(errorString)#, sys.exc_info()[0]
-         
- 
-        
-#        self._ImportXenicsLibFuntions()
+        raise Exception(errorString)
         
     def Initialize(self, DeviceNum = None, InitFlag = None):
         
@@ -152,8 +124,7 @@ class ALP4():
         if InitFlag == None:
             InitFlag = ct.c_long(self._ALP_DEFAULT)
         
-            
-#        test = ct.c_long(0)
+
         if not (self._AlpDevAlloc(DeviceNum,InitFlag,ct.byref(self.ALP_ID)) == self._ALP_OK):
             self._raiseError('Cannot open DMD.')
             
@@ -172,22 +143,15 @@ class ALP4():
         elif (self.DMDType.value == self._ALP_DMDTYPE_WQXGA_400MHZ_090A or self.DMDType.value == self._ALP_DMDTYPE_WQXGA_480MHZ_090A):
            self.nSizeX = 2560; self.nSizeY = 1600
         else:
-            print('blabla')
             self._raiseError("DMD Type not supported or unknown.")
 
         print 'DMD found, resolution = ', self.nSizeX, 'x', self.nSizeY, '.'
             
        
-#        print self._ALPLib.AlpDevAlloc(ct.c_long(DeviceNum),ct.c_long(InitFlag),ct.byref(self.ALP_ID))
-
     def AllocateSequence(self, imgData = None, nbImg = 1, bitDepth = 1):
         '''
         Allocate memory on the DDR RAM for the sequence of image.
         '''
-        #        strVal = []
-        #        for ival in range(bitDepth):
-        #            strVal.append()4
-                
 
         data = ''.join(chr(int(x)) for x in imgData)
         pImageData = ct.cast(ct.create_string_buffer(data,self.nSizeX*self.nSizeY),ct.c_void_p)    
@@ -199,7 +163,7 @@ class ALP4():
         # Load the data into memory, here we load everythong, so we start at image 0 for nbImg images.
         if not (self._ALPLib.AlpSeqPut(self.ALP_ID, DDRseq_pointer, 0, nbImg, pImageData) == self._ALP_OK):
             self._raiseError('Cannot allocate image sequence.')
-#        AlpProjStartCont(self.ALP_ID, nSeqId )) 
+        # AlpProjStartCont(self.ALP_ID, nSeqId )) 
         self._lastDDRseq = DDRseq_pointer
         return DDRseq_pointer
         
@@ -239,31 +203,3 @@ class ALP4():
 
     def Free(self):
         self._ALPLib.AlpDevFree(self.ALP_ID)
-
-
-                
-if __name__ == "__main__":
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import scipy.misc, scipy.ndimage
-    DMD = ALP4()
-    DMD.Initialize()
-    bitDepth = 8
-    img = np.zeros([DMD.nSizeY,DMD.nSizeX])
-    simg = scipy.ndimage.zoom(np.array(scipy.misc.ascent()),2, order =0 )//(2**(8-bitDepth))
-    img[(DMD.nSizeY-1024)//2:(DMD.nSizeY-1024)//2+1024,(DMD.nSizeX-1024)//2:(DMD.nSizeX-1024)//2+1024] = simg
-#    img[:,:DMD.nSizeX//2] = 1
-    
-    plt.figure()
-    plt.imshow(img)
-    DMD.AllocateSequence( imgData = img.ravel(),bitDepth = bitDepth)
-    DMD.SetTiming(2000)
-    
-#    img = np.ones([DMD.nSizeY,DMD.nSizeX]);DMD.AllocateSequence( imgData = img.ravel());DMD.Run()
-    DMD.Run()
-    
-#    DMD.Stop()
-#    DMD.Free()
-    
-    
-    
