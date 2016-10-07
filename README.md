@@ -3,7 +3,7 @@ A Python module to control Vialux DMDs based on ALP4.X API. It uses the .ddl fil
 
 ## What is it?
 
-This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. This code is tested with a device using the 4.3 version of the ALP API, other version may have issues.
+This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. Vialux provide dlls and modules for Matlab and Labview but not for Python. This code is tested with a device using the 4.3 version of the ALP API, other version may have issues.
 
 ## Requirements
 
