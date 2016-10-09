@@ -1,5 +1,5 @@
 # ALP4lib
-A Python module to control Vialux DMDs based on ALP4.X API. It uses the .ddl files provided by Vialux.
+A Python module to control Vialux DMDs based on ALP4.X API. It uses the .ddl files provided by Vialux. This module comes with no warranty and does not currently supports all the basic ALP API functions.
 
 ## What is it?
 
@@ -34,3 +34,16 @@ DMD.SetTiming(20000) # 50 Hz
 DMD.Stop()
 DMD.Free()
 ``` 
+
+## 
+```python
+
+import numpy as np
+import scipy.misc, scipy.ndimage
+
+# Instantiate the ALP4 object with specifying the dll directory and API version.
+DMD = ALP4(version = '4.3', libDir = 'C:\Program Files\ALP-4.3\ALP-4.3 API')
+
+# Initialize communication with the DMD having the serial number myDMD_serial (useful for multiple DMD used on the same computer).
+DMD.Initialize(self, DeviceNum = myDMD_serial)  
+```
