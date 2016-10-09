@@ -55,7 +55,7 @@ DMD.Initialize(self, DeviceNum = myDMD_serial)
 bitDepth = 8
 nbImg = 4
 
-# We create the sequence image concatenated as a long 1D numpy array.
+# We create the sequence of images concatenated in a long 1D numpy array.
 imgData = np.array([])
 [X,Y] = np.meshgrid(np.arange(DMD.nSizeX),np.arange(DMD.nSizeY))
 for i in range(nbImg)
