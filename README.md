@@ -58,8 +58,8 @@ nbImg = 4
 # We create the sequence image concatenated as a long 1D numpy array.
 imgData = np.array([])
 [X,Y] = np.meshgrid(np.arange(DMD.nSizeX),np.arange(DMD.nSizeY))
-for _ in range(nbImg)
-imgData = np.append(imgData,(np.sin((1.*X)/50)*2**bitDepth).ravel())
+for i in range(nbImg)
+  imgData = np.append(imgData,(np.sin((1.*X)/50+(i-1.)/nbImg*np.Pi*2)*2**bitDepth).ravel())
 
 # Allocate the memory specifying the number of images and the bit depth.
 DMD.AllocateSequence( imgData = img.ravel(), nbImg = nbImg, bitDepth = bitDepth)
