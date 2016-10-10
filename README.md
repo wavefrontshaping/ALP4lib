@@ -19,6 +19,7 @@ Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files sh
 ```python
 import numpy as np
 import scipy.misc, scipy.ndimage
+import ALP4
 
 DMD = ALP4(version = '4.3')
 DMD.Initialize()
