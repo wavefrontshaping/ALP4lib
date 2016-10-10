@@ -32,6 +32,8 @@ imgSeq  = np.concatenate([imgBlack.ravel(),imgWhite.ravel()])
 DMD.AllocateSequence( imgData = imgSeq, nbImg = 2, bitDepth = bitDepth)
 DMD.SetTiming(20000) # 50 Hz
 
+DMD.Run()
+
 DMD.Stop()
 DMD.Free()
 ``` 
