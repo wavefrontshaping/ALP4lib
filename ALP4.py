@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Created on Wed Oct 05 15:48:53 2016
 
@@ -5,7 +7,6 @@ Created on Wed Oct 05 15:48:53 2016
 """
 
 import ctypes as ct
-import sys
 import platform
 
 class ALP4():
@@ -34,7 +35,7 @@ class ALP4():
             libPath += 'alp4395.dll'
             
         print('Loading linrary: ' + libPath)
-        self._ALPLib = ct.CDLL("./x64/alp4395.dll")   
+        self._ALPLib = ct.CDLL(libPath)   
             
 
 
@@ -55,7 +56,7 @@ class ALP4():
         self._ALP_DEV_STATE =			2002L	#	current ALP status, see above */
         self._ALP_AVAIL_MEMORY =		2003L	#	ALP on-board sequence memory available for further sequence */
         										#	allocation (AlpSeqAlloc); number of binary pictures */
-        # Temperatures. Data format: signed long with 1 LSB=1/256 °C */
+        # Temperatures. Data format: signed long with 1 LSB=1/256 degrees C */
         self._ALP_DDC_FPGA_TEMPERATURE =	2050L	# V4100 Rev B: LM95231. External channel: DDC FPGAs Temperature Diode */
         self._ALP_APPS_FPGA_TEMPERATURE	 = 2051L	# V4100 Rev B: LM95231. External channel: Application FPGAs Temperature Diode */
         self._ALP_PCB_TEMPERATURE = 		2052L	# V4100 Rev B: LM95231. Internal channel. "Board temperature" */
@@ -95,6 +96,31 @@ class ALP4():
         
         self._ALP_PWM_LEVEL = 		2063L	# PWM pin duty-cycle as percentage: 0..100%; after AlpDevAlloc: 0% */
 
+        #  AlpSeqInquire */
+        self._ALP_BITPLANES =			2200L	#	Bit depth of the pictures in the sequence */
+        self._ALP_PICNUM	=			2201L	#	Number of pictures in the sequence */
+        self._ALP_PICTURE_TIME =		2203L	#	Time between the start of consecutive pictures in the sequence in microseconds, */
+        										#	the corresponding in frames per second is */
+        										#	picture rate [fps] = 1 000 000 / ALP_PICTURE_TIME [µs] */
+        self._ALP_ILLUMINATE_TIME =		2204L	#	Duration of the display of one picture in microseconds */
+        self._ALP_SYNCH_DELAY =			2205L	#	Delay of the start of picture display with respect */
+        										#	to the frame synch output (master mode) in microseconds */
+        self._ALP_SYNCH_PULSEWIDTH =	2206L	#	Duration of the active frame synch output pulse in microseconds */
+        self._ALP_TRIGGER_IN_DELAY =	2207L	#	Delay of the start of picture display with respect to the */
+        										#	active trigger input edge in microseconds */
+        self._ALP_MAX_SYNCH_DELAY =		2209L	#	Maximal duration of frame synch output to projection delay in microseconds */
+        self._ALP_MAX_TRIGGER_IN_DELAY =	2210L	#	Maximal duration of trigger input to projection delay in microseconds */
+        
+        self._ALP_MIN_PICTURE_TIME =	2211L	#	Minimum time between the start of consecutive pictures in microseconds */
+        self._ALP_MIN_ILLUMINATE_TIME =	2212L	#	Minimum duration of the display of one picture in microseconds */
+        										#	depends on ALP_BITNUM and ALP_BIN_MODE */
+        self._ALP_MAX_PICTURE_TIME =	2213L	#	Maximum value of ALP_PICTURE_TIME */
+        
+        										#	ALP_PICTURE_TIME = ALP_ON_TIME + ALP_OFF_TIME */
+        										#	ALP_ON_TIME may be smaller than ALP_ILLUMINATE_TIME */
+        self._ALP_ON_TIME =				2214L	#	Total active projection time */
+        self._ALP_OFF_TIME =			2215L	#	Total inactive projection time */
+
         
         
         ## Class parameters
@@ -117,15 +143,19 @@ class ALP4():
     def _raiseError(self, errorString):
         raise Exception(errorString)
         
-    def Initialize(self, DeviceNum = None, InitFlag = None):
+    def Initialize(self, DeviceNum = None):
+        '''
+        Initialize the communication with the DMD.        
         
+        Usage:
+        Initialize(DeviceNum = None)
+        DeviceNum:  Serial number of the DMD to initialize, useful for multiple DMD control.
+                    If not specify, open the first available DMD.
+        '''
         if DeviceNum == None:
-            DeviceNum = ct.c_long(self._ALP_DEFAULT)
-        if InitFlag == None:
-            InitFlag = ct.c_long(self._ALP_DEFAULT)
-        
+            DeviceNum = ct.c_long(self._ALP_DEFAULT)       
 
-        if not (self._AlpDevAlloc(DeviceNum,InitFlag,ct.byref(self.ALP_ID)) == self._ALP_OK):
+        if not (self._ALPLib.AlpDevAlloc(DeviceNum,self._ALP_DEFAULT,ct.byref(self.ALP_ID)) == self._ALP_OK):
             self._raiseError('Cannot open DMD.')
             
         if not (self._ALPLib.AlpDevInquire(self.ALP_ID, self._ALP_DEV_DMDTYPE, ct.byref(self.DMDType)) == self._ALP_OK):
@@ -148,13 +178,20 @@ class ALP4():
         print 'DMD found, resolution = ', self.nSizeX, 'x', self.nSizeY, '.'
             
        
-    def AllocateSequence(self, imgData = None, nbImg = 1, bitDepth = 1):
+    def AllocateSequence(self, imgData, nbImg = 1, bitDepth = 1):
         '''
-        Allocate memory on the DDR RAM for the sequence of image.
+        Allocate memory on the DDR RAM for the sequence of image. 
+        Data values has to be between 0 and 128(?).
+        
+        Usage:
+        AllocateSequence(imgData, nbImg = 1, bitDepth = 1)
+        imgData: Data stream (list, 1D array or 1D numpyarray) corresponding to a sequence of nSizeX by nSizeX images.
+        nbImg: Number of images in the sequence
+        bitDepth: Quantization of the image between 1 (on/off) and 8 (256 pwm levels).
         '''
 
         data = ''.join(chr(int(x)) for x in imgData)
-        pImageData = ct.cast(ct.create_string_buffer(data,self.nSizeX*self.nSizeY),ct.c_void_p)    
+        pImageData = ct.cast(ct.create_string_buffer(data,nbImg*self.nSizeX*self.nSizeY),ct.c_void_p)    
 
         DDRseq_pointer = ct.c_long(0)
         # Allocate memory on the DDR RAM for the sequence of image.
@@ -163,12 +200,34 @@ class ALP4():
         # Load the data into memory, here we load everythong, so we start at image 0 for nbImg images.
         if not (self._ALPLib.AlpSeqPut(self.ALP_ID, DDRseq_pointer, 0, nbImg, pImageData) == self._ALP_OK):
             self._raiseError('Cannot allocate image sequence.')
-        # AlpProjStartCont(self.ALP_ID, nSeqId )) 
         self._lastDDRseq = DDRseq_pointer
         return DDRseq_pointer
         
-    def SetTiming(self, nPictureTime, DDRseq_pointer = None, synchDelay = None, synchPulseWidth = None, triggerInDelay = None):
+    def SetTiming(self, DDRseq_pointer = None, illuminationTime = None, pictureTime = None, synchDelay = None,
+                  synchPulseWidth = None, triggerInDelay = None):
+        '''
+        Set the timing properties of the sequence to display.
+
+        Usage:
+        SetTiming(DDRseq_pointer = None, illuminationTime = None, pictureTime = None, synchDelay = None, 
+                  synchPulseWidth = None, triggerInDelay = None)
+                  
+        DDRseq_pointer: Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+        illuminationTime: Display time of a single image of the sequence in microseconds. 
+                          If not specified, use the highest possible value compatible with pictureTime.
+        pictureTime: Time between the start of two consecutive picture, up to 10^7 microseconds = 10 seconds.
+                     With illumination time sets the display rate.
+                     If not specified, the value is set to minimize the dark time according illuminationTime.
+                     If illuminationTime is also not specified, set to a frame rate of 30Hz.
+        synchDelay: Specifies the time delay between the start of the output sync pulse and the start of the display (master mode).
+                    Value between 0 and 130,000 micros seconds. Set to 0 if not specified.
+        synchPulseWidth: Duration of the sync output pulse. 
+                         By default equals synchDelay + illuminationTime in normal mode.
+                         By default equals ALP_ILLUMINATION_TIME in binary uninterrupted mode.
+        triggerInDelay: Length of the trigger signal in microseconds, set to 0 by default.
         
+        
+        '''
         if (DDRseq_pointer == None) and (self._lastDDRseq):
             DDRseq_pointer = self._lastDDRseq
         if (DDRseq_pointer == None):
@@ -179,11 +238,84 @@ class ALP4():
             synchPulseWidth = self._synchPulseWidth
         if (triggerInDelay == None):
             triggerInDelay = self._triggerInDelay
+        if (illuminationTime == None):
+            illuminationTime = self._ALP_DEFAULT
+        if (pictureTime == None):
+            pictureTime = self._ALP_DEFAULT
             
         
         
-        if not (self._ALPLib.AlpSeqTiming(self.ALP_ID, DDRseq_pointer, self._ALP_DEFAULT, nPictureTime, synchDelay, synchPulseWidth, triggerInDelay)  == self._ALP_OK):
+        if not (self._ALPLib.AlpSeqTiming(self.ALP_ID, DDRseq_pointer, self._ALP_DEFAULT, pictureTime, synchDelay, synchPulseWidth, triggerInDelay)  == self._ALP_OK):
             self._raiseError('Cannot set timing.')
+            
+    def Inquire(self, request,  DDRseq_pointer = None):
+        '''
+        Ask the controller board the value of a specified parameter about an image sequence.
+        
+        Usage: Inquire(self, request, DDRseq_pointer = None)
+        
+        request: type of value to return:
+                    'bitDepthPic': bit depth of the pictures in the sequence
+                    'bitDepthDisplay': bit depth for display
+                    'binMode': sequence display in binary mode
+                    'nbPic' : number of pictures in the sequence
+                    'firstFrame': number of the first picture in the sequence selected for display
+                    'lastFrame': number of the last picture in the sequence selected for display
+                    'nbSeqRepeat': number of automatically repeated displays of the sequence
+                    
+        '''
+        
+        if (request == 'bitDepthPic'):
+            inquireType = self._ALP_BITPLANES
+        elif (request == 'bitDepthDisplay'):
+            inquireType = self._ALP_BITNUM
+        elif (request == 'binMode'):
+            inquireType = self._ALP_BIN_MODE
+        elif (request == 'nbPic'):
+            inquireType = self._ALP_PICNUM
+        elif (request == 'firstFrame'):
+            inquireType = self._ALP_FIRSTFRAME
+        elif (request == 'lastFrame'):
+            inquireType = self._ALP_LASTFRAME
+        elif (request == 'nbSeqRepeat'):
+            inquireType = self._ALP_SEQ_REPEAT
+        elif (request == 'minPicTime'):
+            inquireType = self._ALP_MIN_PICTURE_TIME
+        elif (request == 'maxPicTime'):
+            inquireType = self._ALP_MAX_PICTURE_TIME
+        elif (request == 'illuminationTime'):
+            inquireType = self._ALP_ILLUMINATE_TIME   
+        elif (request == 'minIlluminationTime'):
+            inquireType = self._ALP_MIN_ILLUMINATE_TIME
+        elif (request == 'onTime'):
+            inquireType = self._ALP_ON_TIME
+        elif (request == 'offTime'):
+            inquireType = self._ALP_OFF_TIME
+        elif (request == 'synchDelay'):
+            inquireType = self._ALP_SYNCH_DELAY
+        elif (request == 'maxSynchDelay'):
+            inquireType = self._ALP_MAX_SYNCH_DELAY 
+        elif (request == 'synchPulseWidth'):
+            inquireType = self._ALP_SYNCH_PULSEWIDTH
+        elif (request == 'triggerInDelay'):
+            inquireType = self._ALP_TRIGGER_IN_DELAY 
+        elif (request == 'maxTriggerInDelay'):
+            inquireType = self._ALP_MAX_TRIGGER_IN_DELAY
+        elif (request == 'dataFormat'):
+            inquireType = self._ALP_DATA_FORMAT
+        elif (request == 'pwmMode'):
+            inquireType = self._ALP_PWM_MODE 
+        else:
+            self._raiseError('Unknown request')
+    
+            
+        ret = ct.c_double(0)
+        
+        if (DDRseq_pointer == None) and (self._lastDDRseq):
+            DDRseq_pointer = self._lastDDRseq
+            
+        self._ALPLib.AlpSeqInquire(self.ALP_ID,  DDRseq_pointer, inquireType, ct.byref(ret))
+        return ret.value()
         
         
     def Run(self, DDRseq_pointer = None):
