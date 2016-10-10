@@ -27,7 +27,7 @@ DMD.Initialize()
 bitDepth = 1    # binary amplitude image (0 or 1)
 imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
 imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])
-imgSeq  = np.concatenate([imgB.ravel(),imgW.ravel()])
+imgSeq  = np.concatenate([imgBlack.ravel(),imgWhite.ravel()])
 
 DMD.AllocateSequence( imgData = imgSeq, nbImg = 2, bitDepth = bitDepth)
 DMD.SetTiming(20000) # 50 Hz
