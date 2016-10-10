@@ -216,7 +216,7 @@ class ALP4():
         illuminationTime: Display time of a single image of the sequence in microseconds. 
                           If not specified, use the highest possible value compatible with pictureTime.
         pictureTime: Time between the start of two consecutive picture, up to 10^7 microseconds = 10 seconds.
-                     With illumination time sets the display rate.
+                     With illuminationTime, it sets the display rate.
                      If not specified, the value is set to minimize the dark time according illuminationTime.
                      If illuminationTime is also not specified, set to a frame rate of 30Hz.
         synchDelay: Specifies the time delay between the start of the output sync pulse and the start of the display (master mode).
