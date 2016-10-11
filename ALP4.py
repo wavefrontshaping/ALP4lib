@@ -121,7 +121,23 @@ class ALP4():
         self._ALP_ON_TIME =				2214L	#	Total active projection time */
         self._ALP_OFF_TIME =			2215L	#	Total inactive projection time */
 
-        
+        self._ALP_ERRORS = {1001L:'The specified ALP device has not been found or is not ready.',
+                            1002L:'The ALP device is not in idle state.',
+                            1003L:'The specified ALP device identifier is not valid.',
+                            1004L:'The specified ALP device is already allocated.',
+                            1005L:'One of the parameters is invalid.',
+                            1006L:'Error accessing user data.',
+                            1007L:'The requested memory is not available (full?).',
+                            1008L:'The sequence specified is currently in use.',
+                            1009L:'The ALP device has been stopped while image data transfer was active.',
+                            1010L:'Initialization error.',
+                            1011L:'Communication error.',
+                            1012L:'The specified ALP has been removed.',
+                            1013L:'The onboard FPGA is unconfigured.',
+                            1014L:'The function is not supported by this version of the driver file VlxUsbLd.sys.',
+                            1018L:'Waking up the DMD from PWR_FLOAT did not work (ALP_DMD_POWER_FLOAT)',
+                            1019L:'Support in ALP drivers missing. Update drivers and power-cycle device.',
+                            1020L:'SDRAM Initialization failed.'}
         
         ## Class parameters
         # ID of the current ALP device
@@ -137,11 +153,10 @@ class ALP4():
         # Time between the incoming trigger edge and the start of the display (slave mode)
         self._triggerInDelay = self._ALP_DEFAULT
         
-
         
-        
-    def _raiseError(self, errorString):
-        raise Exception(errorString)
+    def _checkError(self, returnValue, errorString):
+        if not (returnValue == self._ALP_OK):
+            raise Exception(errorString+'\n'+self._ALP_ERRORS[returnValue])
         
     def Initialize(self, DeviceNum = None):
         '''
@@ -154,13 +169,10 @@ class ALP4():
         '''
         if DeviceNum == None:
             DeviceNum = ct.c_long(self._ALP_DEFAULT)       
-
-        if not (self._ALPLib.AlpDevAlloc(DeviceNum,self._ALP_DEFAULT,ct.byref(self.ALP_ID)) == self._ALP_OK):
-            self._raiseError('Cannot open DMD.')
-            
-        if not (self._ALPLib.AlpDevInquire(self.ALP_ID, self._ALP_DEV_DMDTYPE, ct.byref(self.DMDType)) == self._ALP_OK):
-            self._raiseError('Inquery fails.')      
-
+ 
+        self._checkError(self._ALPLib.AlpDevAlloc(DeviceNum,self._ALP_DEFAULT,ct.byref(self.ALP_ID)),'Cannot open DMD.')
+        
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, self._ALP_DEV_DMDTYPE, ct.byref(self.DMDType)),'Inquery fails.')
             
         if (self.DMDType.value == self._ALP_DMDTYPE_XGA or self.DMDType.value == self._ALP_DMDTYPE_XGA_055A or self.DMDType.value == self._ALP_DMDTYPE_XGA_055X or self.DMDType.value == self._ALP_DMDTYPE_XGA_07A):
             self.nSizeX = 1024; self.nSizeY = 768
@@ -198,8 +210,11 @@ class ALP4():
         self._ALPLib.AlpSeqAlloc(self.ALP_ID, ct.c_long(bitDepth), ct.c_long(nbImg), ct.byref(DDRseq_pointer))
         
         # Load the data into memory, here we load everythong, so we start at image 0 for nbImg images.
-        if not (self._ALPLib.AlpSeqPut(self.ALP_ID, DDRseq_pointer, 0, nbImg, pImageData) == self._ALP_OK):
-            self._raiseError('Cannot allocate image sequence.')
+#        if not (self._ALPLib.AlpSeqPut(self.ALP_ID, DDRseq_pointer, 0, nbImg, pImageData) == self._ALP_OK):
+#            self._raiseError('Cannot allocate image sequence.')
+
+        self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID, DDRseq_pointer, 0, nbImg, pImageData),'Cannot allocate image sequence.')
+
         self._lastDDRseq = DDRseq_pointer
         return DDRseq_pointer
         
@@ -220,7 +235,7 @@ class ALP4():
                      If not specified, the value is set to minimize the dark time according illuminationTime.
                      If illuminationTime is also not specified, set to a frame rate of 30Hz.
         synchDelay: Specifies the time delay between the start of the output sync pulse and the start of the display (master mode).
-                    Value between 0 and 130,000 micros seconds. Set to 0 if not specified.
+                    Value between 0 and 130,000 microseconds. Set to 0 if not specified.
         synchPulseWidth: Duration of the sync output pulse. 
                          By default equals synchDelay + illuminationTime in normal mode.
                          By default equals ALP_ILLUMINATION_TIME in binary uninterrupted mode.
@@ -232,6 +247,7 @@ class ALP4():
             DDRseq_pointer = self._lastDDRseq
         if (DDRseq_pointer == None):
             self._raiseError('No sequence to display.')
+            
         if (synchDelay == None):
             synchDelay = self._synchDelay
         if (synchPulseWidth == None):
@@ -244,17 +260,89 @@ class ALP4():
             pictureTime = self._ALP_DEFAULT
             
         
+          
+#        if not (self._ALPLib.AlpSeqTiming(self.ALP_ID, DDRseq_pointer, illuminationTime, pictureTime, synchDelay, synchPulseWidth, triggerInDelay)  == self._ALP_OK):
+#            self._raiseError('Cannot set timing.')
+        self._checkError(self._ALPLib.AlpSeqTiming(self.ALP_ID, DDRseq_pointer, illuminationTime, pictureTime, synchDelay, synchPulseWidth, triggerInDelay),'Cannot set timing.')
+
+    def DevInquire(self, request):
+        '''
+        Ask the controller board the value of a specified parameter about the ALP device.
         
-        if not (self._ALPLib.AlpSeqTiming(self.ALP_ID, DDRseq_pointer, self._ALP_DEFAULT, pictureTime, synchDelay, synchPulseWidth, triggerInDelay)  == self._ALP_OK):
-            self._raiseError('Cannot set timing.')
+        Usage: Inquire(self, request)
+        
+        request: type of value to return:
+            'deviceNumber': Serial number of the ALP device
+            'version': Version number of the ALP device, e.g. 0x0401 for ALP-4.1
+            'availableMemory': ALP on-board sequence memory available for further sequence 
+                    allocation (AlpSeqAlloc) – number of binary pictures;
+                    The returned number of binary pictures represents the largest free 
+                    memory area available for sequence allocation. If ALP memory is 
+                    fragmented because of repeated calls of AlpSeqAlloc and AlpSeqFree
+                    then this value may differ from the total non-allocated memory.
+            'synchPolarity': Frame synch output signal polarity:
+                             _ALP_LEVEL_HIGH or _ALP_LEVEL_LOW 
+            'triggerEdge':   trigger input signal slope:
+                             _ALP_EDGE_FALLING or _ALP_EDGE_RISING
+            'DMDType':  Return the type of DMD If no DMD is detected (ALP_DMDTYPE_DISCONNECT), 
+                        then the API emulates a 1080p DMD.
+            'displayHeight': Number of mirror rows on the DMD, according to 'DMDType'
+            'displayWidth': number of mirror columns on the DMD, according to 'DMDType'
+            'USBConnection':  Check, if the USB connection is ok 
+            'DDCFPGATemp':  Returns FPGA temperature. 
+                            The value is written as 1/256 °C to *UserVarPtr. It ranges from -128 °C to +127.96875 °C.
+            'AppsFPGATemp': Returns FPGA temperature. The value is written as 1/256 °C to *UserVarPtr. 
+                            It ranges from -128 °C to +127.96875 °C.
+            'PCBTemp':  Returns PCB temperature.                
+                        The value is written as 1/256 °C to *UserVarPtr. It ranges from -128 °C to +127.75 °C. Accuracy: +/- 3 °C
+            'PWMLevelp':    Percentage: duty cycle of the PWM pin, see PWM Output below
+        '''
+        
+        if (request == 'deviceNumber'):
+            query = self._ALP_DEVICE_NUMBER
+        if (request == 'version'):
+            query = self._ALP_VERSION
+        if (request == 'availableMemory'):
+            query = self._ALP_AVAIL_MEMORY 
+        if (request == 'synchPolarity'):
+            query = self._ALP_SYNCH_POLARITY
+        if (request == 'triggerEdge'):
+            query = self._ALP_TRIGGER_EDGE     
+        if (request == 'DMDType'):
+            query = self._ALP_DEV_DMDTYPE 
+        if (request == 'DMDMode'):
+            query = self._ALP_DEV_DMD_MODE 
+        if (request == 'displayHeight'):
+            query = self._ALP_DEV_DISPLAY_HEIGHT
+        if (request == 'displayWidth'):
+            query = self._ALP_DEV_DISPLAY_WIDTH
+        if (request == 'USBConnection'):
+            query = self._ALP_USB_CONNECTION  
+        if (request == 'DDCFPGATemp'):
+            query = self._ALP_DDC_FPGA_TEMPERATURE,
+        if (request == 'AppsFPGATemp'):
+            query = self._ALP_APPS_FPGA_TEMPERATURE
+        if (request == 'PCBTemp'):
+            query = self._ALP_PCB_TEMPERATURE
+        if (request == 'PWMLevelp'):
+            query = self._ALP_PWM_LEVEL 
+        else:
+            self._raiseError('Unknown request')
             
-    def Inquire(self, request,  DDRseq_pointer = None):
+        ret = ct.c_double(0)
+        
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, query, ct.byref(ret)),'Error sending request.')
+        return ret.value()
+        
+            
+    def SeqInquire(self, request,  DDRseq_pointer = None):
         '''
         Ask the controller board the value of a specified parameter about an image sequence.
         
-        Usage: Inquire(self, request, DDRseq_pointer = None)
         
-        request: type of value to return:
+        Usage: Inquire(self, request, DDRseq_pointer = None)
+
+            request: type of value to return:
                     'bitDepthPic': bit depth of the pictures in the sequence
                     'bitDepthDisplay': bit depth for display
                     'binMode': sequence display in binary mode
@@ -262,7 +350,21 @@ class ALP4():
                     'firstFrame': number of the first picture in the sequence selected for display
                     'lastFrame': number of the last picture in the sequence selected for display
                     'nbSeqRepeat': number of automatically repeated displays of the sequence
-                    
+                    'minPicTime': Minimum time between the start of consecutive pictures
+                    'maxPicTime': Maximum time between the start of consecutive pictures
+                    'illuminationTime': Duration of the display of one picture in µs
+                    'minIlluminationTime': Minimum duration of the display of one picture in µs
+                    'onTime': Total active projection time
+                    'offTime': Total inactive projection time
+                    'synchDelay': Delay of the start of picture display with respect 
+                                  to the trigger output (master mode) in µs 
+                    'maxSynchDelay':  Maximal duration of trigger delay in µs 
+                    'synchPulseWidth': Duration of the output trigger in µs
+                    'triggerInDelay':  Delay of the start of picture display with respect to the trigger input in µs 
+                    'maxTriggerInDelay': Maximal duration of trigger delay in µs
+                    'dataFormat': Currently selected image data format (see also AlpSeqControl, AlpSeqPut)
+                    'seqPutLock': Protect sequence data against writing (AlpSeqPut) during display.
+                    'PWMMode': See section Flexible PWM Mode in user manual.       
         '''
         
         if (request == 'bitDepthPic'):
@@ -303,20 +405,35 @@ class ALP4():
             inquireType = self._ALP_MAX_TRIGGER_IN_DELAY
         elif (request == 'dataFormat'):
             inquireType = self._ALP_DATA_FORMAT
-        elif (request == 'pwmMode'):
+        elif (request == 'seqPutLock'):
+            inquireType = self._ALP_SEQ_PUT_LOCK
+        elif (request == 'PWMMode'):
             inquireType = self._ALP_PWM_MODE 
         else:
             self._raiseError('Unknown request')
     
-            
         ret = ct.c_double(0)
         
         if (DDRseq_pointer == None) and (self._lastDDRseq):
             DDRseq_pointer = self._lastDDRseq
             
-        self._ALPLib.AlpSeqInquire(self.ALP_ID,  DDRseq_pointer, inquireType, ct.byref(ret))
+        self._checkError(self._ALPLib.AlpSeqInquire(self.ALP_ID,  DDRseq_pointer, inquireType, ct.byref(ret)),'Error sending request.')
         return ret.value()
         
+    def FreeSeq(self,DDRseq_pointer = None):
+        '''
+        Frees a previously allocated sequence. The ALP memory reserved for the specified sequence in the device DeviceId is released.
+        
+        
+        Usage: FreeSeq(DDRseq_pointer = None)
+        
+            DDRseq_pointer: Id of the sequence to free. If not specified, free the last uploaded sequence.
+        '''
+        if (DDRseq_pointer == None) and (self._lastDDRseq):
+            DDRseq_pointer = self._lastDDRseq
+            
+            
+        self._checkError(self._ALPLib.AlpSeqFree(self.ALP_ID,DDRseq_pointer),'Unable to free the image sequence.')
         
     def Run(self, DDRseq_pointer = None):
         '''
@@ -327,8 +444,13 @@ class ALP4():
         if (DDRseq_pointer == None):
             self._raiseError('No sequence to display.')
         
-        if not (self._ALPLib.AlpProjStartCont(self.ALP_ID, DDRseq_pointer) == self._ALP_OK):
-            self._raiseError('Cannot launch sequence.')
+#        if not (self._ALPLib.AlpProjStartCont(self.ALP_ID, DDRseq_pointer) == self._ALP_OK):
+#            self._raiseError('Cannot launch sequence.')
+        self._checkError(self._ALPLib.AlpProjStartCont(self.ALP_ID, DDRseq_pointer),'Cannot launch sequence.')
+        
+    def DiscretizeArray(self,arr):
+        maxValue = max(arr)
+        
         
     def Stop(self):
         self._ALPLib.AlpDevHalt(self.ALP_ID)
