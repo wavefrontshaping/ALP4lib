@@ -60,19 +60,19 @@ nbImg = 4
 # First sequence: moving fringes
 imgData = np.array([])
 [X,Y] = np.meshgrid(np.arange(DMD.nSizeX),np.arange(DMD.nSizeY))
-for i in range(nbImg)
-  imgData = np.append(imgData,(np.sin((1.*X)/50+(i-1.)/nbImg*np.Pi*2)*2**bitDepth).ravel())
+for i in range(nbImg):
+  imgSeq = np.append(imgData,(np.sin((1.*X)/50+(i-1.)/nbImg*np.pi*2)*2**bitDepth).ravel())
 
 # Allocate the memory specifying the number of images and the bit depth.
-seq1 = DMD.AllocateSequence( imgData = img.ravel(), nbImg = nbImg, bitDepth = bitDepth)
+seq1 = DMD.AllocateSequence( imgData = imgSeq.ravel(), nbImg = nbImg, bitDepth = bitDepth)
 
 # We create a second sequence of images: white to black screen
 imgData = []
-for i in range(nbImg)
-  imgData = np.append(imgData,(np.ones([DMD.nSizeY,DMD.nSizeX])*(1.*i)/(nbImg-1)*2**bitDepth).ravel())
+for i in range(nbImg):
+  imgSeq = np.append(imgData,(np.ones([DMD.nSizeY,DMD.nSizeX])*(1.*i)/(nbImg-1)*2**bitDepth).ravel())
   
 # Allocate the second sequence
-seq2 = DMD.AllocateSequence(imgData = img.ravel(), nbImg = nbImg, bitDepth = bitDepth)
+seq2 = DMD.AllocateSequence(imgData = imgSeq.ravel(), nbImg = nbImg, bitDepth = bitDepth)
 
 #
 SetTiming(self, nPictureTime, DDRseq_pointer = None, synchDelay = None, synchPulseWidth = None, triggerInDelay = None):
