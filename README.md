@@ -44,7 +44,7 @@ imgSeq  = np.concatenate([imgBlack.ravel(),imgWhite.ravel()])
 DMD.SeqAlloc(nbImg = 2, bitDepth = bitDepth)
 # Send the image sequence as a 1D list/array/numpy array
 DMD.SeqPut(imgData = imgSeq)
-# Set imaqge rate to 50 Hz
+# Set image rate to 50 Hz
 DMD.SetTiming(illuminationTime = 20000)
 
 # Run the sequence in an infinite loop
