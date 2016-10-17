@@ -21,23 +21,36 @@ Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files sh
 
 ```python
 import numpy as np
-import scipy.misc, scipy.ndimage
 from ALP4 import *
+import time
 
-DMD = ALP4(version = '4.3')
+# Load the Vialux .dll
+DMD = ALP4(version = '4.3', libDir = 'C:/Program Files/ALP-4.3/ALP-4.3 API/ALP4lib')
+# Initialize the device
 DMD.Initialize()
 
-bitDepth = 1    # binary amplitude image (0 or 1)
+# Binary amplitude image (0 or 1)
+bitDepth = 1    
 imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
-imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])
+imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])*(2**8-1)
 imgSeq  = np.concatenate([imgBlack.ravel(),imgWhite.ravel()])
 
+# Allocate the onboard memory for the image sequence
 DMD.SeqAlloc(nbImg = 2, bitDepth = bitDepth)
+# Send the image sequence as a 1D list/array/numpy array
 DMD.SeqPut(imgData = imgSeq)
-DMD.SetTiming(20000) # 50 Hz
+# Set imaqge rate to 50 Hz
+DMD.SetTiming(illuminationTime = 20000)
 
+# Run the sequence in an infinite loop
 DMD.Run()
 
-DMD.Stop()
+time.sleep(10)
+
+# Stop the sequence display
+DMD.Halt()
+# Free the sequence from the onboard memory
+DMD.FreeSeq()
+# De-allocates the device
 DMD.Free()
 ``` 
