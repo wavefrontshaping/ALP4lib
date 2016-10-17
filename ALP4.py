@@ -238,31 +238,31 @@ ALP_PROJ_WAIT_ILLU_TIME =1L		#  AlpProjWait returns after illuminate time (excep
 
 # for AlpProjInquireEx(ALP_PROJ_PROGRESS):
 class tAlpProjProgress(ct.Structure):
-     _fields_ = [("CurrentQueueId",c_ulong),
-                 ("SequenceId",c_ulong), # Consider that a sequence can be enqueued multiple times! 
-                 ("nWaitingSequences",c_ulong), # number of sequences waiting in the queue
+     _fields_ = [("CurrentQueueId",ct.c_ulong),
+                 ("SequenceId",ct.c_ulong), # Consider that a sequence can be enqueued multiple times! 
+                 ("nWaitingSequences",ct.c_ulong), # number of sequences waiting in the queue
                  # track iterations and frames: device-internal counters are incompletely
                  # reported; The API description contains more details on that. 
-                 ("nSequenceCounter",c_ulong), # Number of iterations to be done
-                 ("nSequenceCounterUnderflow",c_ulong), # nSequenceCounter can
+                 ("nSequenceCounter",ct.c_ulong), # Number of iterations to be done
+                 ("nSequenceCounterUnderflow",ct.c_ulong), # nSequenceCounter can
                  # underflow (for indefinitely long Sequences: AlpProjStartCont);
                  # nSequenceCounterUnderflow is 0 before, and non-null afterwards 
-                 ("nFrameCounter",c_ulong), # Frames left inside current iteration
-                 ("nPictureTime",c_ulong), # micro seconds of each frame; this is
+                 ("nFrameCounter",ct.c_ulong), # Frames left inside current iteration
+                 ("nPictureTime",ct.c_ulong), # micro seconds of each frame; this is
                  # reported, because the picture time of the original sequence could
                  # already have changed in between 
-                 ("nFramesPerSubSequence",c_ulong), # Each sequence iteration
+                 ("nFramesPerSubSequence",ct.c_ulong), # Each sequence iteration
                  # displays this number of frames. It is reported to the user just for
                  # convenience, because it depends on different parameters. */
-                 ("nFlagse",c_ulong)]
+                 ("nFlagse",ct.c_ulong)]
                  # may be a combination of ALP_FLAG_SEQUENCE_ABORTING | SEQUENCE_INDEFINITE | QUEUE_IDLE | FRAME_FINISHED 
 
 
-ALP_FLAG_QUEUE_IDLE	=			ct.c_ulong(1UL)
-ALP_FLAG_SEQUENCE_ABORTING =		ct.c_ulong(2UL)
-ALP_FLAG_SEQUENCE_INDEFINITE =	ct.c_ulong(4UL)	#AlpProjStartCont: this sequence runs indefinitely long, until aborted 
-ALP_FLAG_FRAME_FINISHED	=		ct.c_ulong(8UL)	#illumination of last frame finished, picture time still progressing 
-ALP_FLAG_RSVD0 =				ct.c_ulong(16UL)    # reserved
+ALP_FLAG_QUEUE_IDLE	=			ct.c_ulong(1L)
+ALP_FLAG_SEQUENCE_ABORTING =		ct.c_ulong(2L)
+ALP_FLAG_SEQUENCE_INDEFINITE =	ct.c_ulong(4L)	#AlpProjStartCont: this sequence runs indefinitely long, until aborted 
+ALP_FLAG_FRAME_FINISHED	=		ct.c_ulong(8L)	#illumination of last frame finished, picture time still progressing 
+ALP_FLAG_RSVD0 =				ct.c_ulong(16L)    # reserved
 
 
 
@@ -289,10 +289,13 @@ class ALP4():
     This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
     """    
     
-    def __init__(self, version = '4.3', pathDir = './'):
+    def __init__(self, version = '4.3', libDir = './'):
         
         os_type = platform.system()
-        libPath = pathDir
+        if libDir.endswith('/'):
+            libPath = libDir
+        else:
+           libPath = libDir+'/' 
         ## Load the ALP dll
         if (os_type == 'Windows'):
             if (ct.sizeof(ct.c_voidp) == 8):     ## 64bit    
@@ -309,6 +312,7 @@ class ALP4():
         elif (version == '4.3'):
             libPath += 'alp4395.dll'
             
+        
         print('Loading linrary: ' + libPath)
         self._ALPLib = ct.CDLL(libPath)   
             
@@ -321,16 +325,10 @@ class ALP4():
         self.DMDType = ct.c_long(0)
         # Pointer to the last stored image sequence
         self._lastDDRseq = None
-        # Delay sync
-        self._synchDelay = self._ALP_DEFAULT 
-        # Duration of the pulse for output trigger
-        self._synchPulseWidth = self._ALP_DEFAULT
-        # Time between the incoming trigger edge and the start of the display (slave mode)
-        self._triggerInDelay = self._ALP_DEFAULT
         
         
     def _checkError(self, returnValue, errorString, warning = False):
-        if not (returnValue == self._ALP_OK):
+        if not (returnValue == ALP_OK):
             errorMsg = errorString+'\n'+ALP_ERRORS[returnValue]
             if not warning:
                 raise Exception(errorMsg)
@@ -347,11 +345,11 @@ class ALP4():
                     If not specify, open the first available DMD.
         '''
         if DeviceNum == None:
-            DeviceNum = ct.c_long(self._ALP_DEFAULT)       
+            DeviceNum = ct.c_long(ALP_DEFAULT)       
  
         self._checkError(self._ALPLib.AlpDevAlloc(DeviceNum,ALP_DEFAULT,ct.byref(self.ALP_ID)),'Cannot open DMD.')
         
-        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, self._ALP_DEV_DMDTYPE, ct.byref(self.DMDType)),'Inquery fails.')
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, ALP_DEV_DMDTYPE, ct.byref(self.DMDType)),'Inquery fails.')
             
         if (self.DMDType.value == ALP_DMDTYPE_XGA or self.DMDType.value == ALP_DMDTYPE_XGA_055A or self.DMDType.value == ALP_DMDTYPE_XGA_055X or self.DMDType.value == ALP_DMDTYPE_XGA_07A):
             self.nSizeX = 1024; self.nSizeY = 768
@@ -390,8 +388,6 @@ class ALP4():
         See ALPLib.AlpSeqAlloc in the ALP API description for more information.
         '''
 
-
-
         SequenceId = ct.c_long(0)
         
         # Allocate memory on the DDR RAM for the sequence of image.
@@ -401,7 +397,7 @@ class ALP4():
         self._lastDDRseq =  SequenceId
         return  SequenceId
         
-    def SeqPut(self, imgData,  SequenceId = None, PicOffset = 0, PicLoad = 0):
+    def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0):
         '''
         This  function  allows  loading user  supplied  data  via  the  USB  connection  into  the  ALP  memory  of  a 
         previously allocated sequence (AlpSeqAlloc) or a part of such a sequence. The loading operation can 
@@ -429,10 +425,13 @@ class ALP4():
         See ALPLib.AlpSeqPut in the ALP API description for more information.
         '''
         
-        data = ''.join(chr(int(x)) for x in imgData)
-        pImageData = ct.cast(ct.create_string_buffer(data,nbImg*self.nSizeX*self.nSizeY),ct.c_void_p)    
+        if not SequenceId:
+            SequenceId = self._lastDDRseq 
         
-        self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(nbImg), pImageData),'Cannot send image sequence to device.')
+        data = ''.join(chr(int(x)) for x in imgData)
+        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)    
+        
+        self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
 
         
         
@@ -467,17 +466,17 @@ class ALP4():
             self._raiseError('No sequence to display.')
             
         if (synchDelay == None):
-            synchDelay = self._synchDelay
+            synchDelay = ALP_DEFAULT
         if (synchPulseWidth == None):
-            synchPulseWidth = self._synchPulseWidth
+            synchPulseWidth = ALP_DEFAULT
         if (triggerInDelay == None):
-            triggerInDelay = self._triggerInDelay
+            triggerInDelay = ALP_DEFAULT
         if (illuminationTime == None):
-            illuminationTime = self._ALP_DEFAULT
+            illuminationTime = ALP_DEFAULT
         if (pictureTime == None):
-            pictureTime = self._ALP_DEFAULT
+            pictureTime = ALP_DEFAULT
             
-        self._checkError(self._ALPLib.AlpSeqTiming(self.ALP_ID,  SequenceId, illuminationTime, pictureTime, synchDelay, synchPulseWidth, triggerInDelay),'Cannot set timing.')
+        self._checkError(self._ALPLib.AlpSeqTiming(self.ALP_ID,  SequenceId, ct.c_long(illuminationTime), ct.c_long(pictureTime), ct.c_long(synchDelay), ct.c_long(synchPulseWidth), ct.c_long(triggerInDelay)),'Cannot set timing.')
 
     def DevInquire(self, query):
         '''
@@ -597,7 +596,7 @@ class ALP4():
         
         See AlpProjControl in the ALP API description for control types.
         '''
-        self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, value),'Error sending request.'
+        self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, value),'Error sending request.')
  
     def ProjControlEx(self,  controlType, pointerToStruct):
         '''
@@ -612,7 +611,7 @@ class ALP4():
             
         See AlpProjControlEx in the ALP API description for control types.
         '''
-        self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, value),'Error sending request.'    
+        self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, value),'Error sending request.')  
      
     def SeqControl(self,controlType,value,  SequenceId = None):
         '''
