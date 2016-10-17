@@ -1,10 +1,12 @@
 # ALP4lib
-A Python module to control Vialux DMDs based on ALP4.X API.
+ALP4lib is a Python module to control Vialux DMDs based on ALP4.X API.
 This is not an independant open source module, it uses the .ddl files provided by [Vialux](http://www.vialux.de/en/).
 
 ## What is it?
 
-This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. Vialux provide dlls and modules for Matlab and Labview but not for Python. This code is tested with a device using the 4.3 version of the ALP API, other version may have issues.
+This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. 
+Vialux provides dlls and also modules for Matlab and Labview but not for Python. 
+This code is tested with a device using the 4.3 version of the ALP API, other versions may have issues.
 LED control related functions are not implemented.
 Please read the ALP API description provided with the [Vialux](http://www.vialux.de/en/) ALP installation.
 
@@ -15,7 +17,9 @@ Please read the ALP API description provided with the [Vialux](http://www.vialux
 
 ## Installation
 
-Just copy the ALP4.py file in the working directory. The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
+Just copy the ALP4.py file in the working directory. 
+The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
+The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
 
 ## A simple example
 
