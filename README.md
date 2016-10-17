@@ -56,6 +56,6 @@ time.sleep(10)
 DMD.Halt()
 # Free the sequence from the onboard memory
 DMD.FreeSeq()
-# De-allocates the device
+# De-allocate the device
 DMD.Free()
 ``` 
