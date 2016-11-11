@@ -18,7 +18,25 @@ Please read the ALP API description provided with the [Vialux](http://www.vialux
 
 ## Installation
 
+### Manual installation 
 Just copy the ALP4.py file in the working directory. 
+
+### Automatic installation
+
+To automatically download and copy the module in the python directory (so it can be available from anywhere), run the command:
+
+```shell
+pip install ALP4lib
+```
+
+or 
+
+```shell
+easy_install ALP4lib
+```
+
+## Copy the .dll
+
 The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
 The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
 
