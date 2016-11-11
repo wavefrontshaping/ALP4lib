@@ -312,7 +312,7 @@ class ALP4():
         elif (version == '4.3'):
             libPath += 'alp4395.dll'
             
-        
+       
         print('Loading library: ' + libPath)
         self._ALPLib = ct.CDLL(libPath)   
             
