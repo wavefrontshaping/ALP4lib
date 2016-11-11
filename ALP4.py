@@ -333,7 +333,7 @@ class ALP4():
             if not warning:
                 raise Exception(errorMsg)
             else:
-                print errorMsg
+                print(errorMsg)
         
     def Initialize(self, DeviceNum = None):
         '''
@@ -364,7 +364,7 @@ class ALP4():
         else:
             self._raiseError("DMD Type not supported or unknown.")
 
-        print 'DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.'
+        print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
             
        
     def SeqAlloc(self, nbImg = 1, bitDepth = 1):
