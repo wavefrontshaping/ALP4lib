@@ -434,7 +434,7 @@ class ALP4():
         SeqPut(imgData, nbImg = 1, bitDepth = 1)
         
         PARAMETERS
-        ---------
+        ----------
         
         imgData : list, 1D array or 1D ndarray
                   Data stream corresponding to a sequence of nSizeX by nSizeX images.
@@ -526,6 +526,10 @@ class ALP4():
         Usage: Inquire(request)
             request: type of value to return
         
+            
+        SEE ALSO
+        --------
+        
         See AlpSeqInquire in the ALP API description for request types.
     
         '''
@@ -543,9 +547,24 @@ class ALP4():
         
         
         Usage: Inquire(self, request,  SequenceId = None)
-            request: type of value to return.
-            SequenceId: Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
-            
+        
+        PARAMETERS
+        ----------
+        
+        request : ctypes c_ulong
+                  Sepcifies the type of value to return.
+        SequenceId : ctyles c_long, optional
+                    Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+        
+        RETURNS
+        -------
+        
+        value : c_double
+                Value of the requiested parameter.
+                
+        
+        SEE ALSO
+        --------            
         See AlpSeqInquire in the ALP API description for request types.
         '''
         ret = ct.c_double(0)
@@ -646,10 +665,19 @@ class ALP4():
         Meaning and layout of the data depend on the ControlType.
         
         Usage: Control(self, controlType, value)
-            controlType: type of value to set
-            pointerToStruct: a tFlutWrite structure. Create a tFlutWrite object and pass it to the function using ctypes.byref
+        
+        PARAMETERS
+        ----------
+        controlType : attribute flag (ctypes c_ulong)
+            Specify the paramter to set.
+            
+        pointerToStruct : ctypes POINTER
+            Pointer to a tFlutWrite structure. Create a tFlutWrite object and pass it to the function using ctypes.byref
             (Requires importing ctypes)
             
+            
+        SEE ALSO
+        --------
         See AlpProjControlEx in the ALP API description for control types.
         '''
         self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, pointerToStruct),'Error sending request.')  
@@ -698,11 +726,18 @@ class ALP4():
         
         Usage: Run( SequenceId = None, loop = True)
         
-             SequenceId: Id of the sequence to run.
-                If no sequence pointer is given, display the last sequence stored.
-            loop: If True, display the sequence continuously using ALPLib.AlpProjStartCont. 
-                If False, display it once using ALPLib.AlpProjStart. Set to True by default.
+        PARAMETERS
+        ----------
+        
+        SequenceId : ctypes c_ulong
+                     Id of the sequence to run.
+                     If no sequence pointer is given, display the last sequence stored.
+        loop : bool
+               If True, display the sequence continuously using ALPLib.AlpProjStartCont. 
+               If False, display it once using ALPLib.AlpProjStart. Set to True by default.
                 
+        SEE ALSO
+        --------
         See ALPLib.AlpProjStart and ALPLib.AlpProjStartCont in the ALP API description for more information.
         '''
         if ( SequenceId == None) and (self._lastDDRseq):
