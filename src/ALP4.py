@@ -541,7 +541,7 @@ class ALP4():
         SEE ALSO
         --------
         
-        See AlpSeqInquire in the ALP API description for request types.
+        See AlpDevInquire in the ALP API description for request types.
     
         '''
 
@@ -627,10 +627,10 @@ class ALP4():
         PARAMETERS
         ----------
         
-        request : ctypes c_ulong
-                  Sepcifies the type of value to return.
+        inquireType : ctypes c_ulong
+                      Sepcifies the type of value to return.
         SequenceId : ctyles c_long, optional
-                    Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
         
         RETURNS
         -------
@@ -661,27 +661,37 @@ class ALP4():
         PARAMETERS
         ----------
         
-        controlType: type of value to set
-            value: value to set
+        controlType: ctypes c_ulong
+                     Specifies the type of value to set.
         
+        SEE ALSO
+        --------
         See AlpDevControl in the ALP API description for control types.
         '''
         self._checkError(self._ALPLib.AlpDevControl(self.ALP_ID, controlType, ct.c_long(value)),'Error sending request.')
         
-    def DevControlEx(self, controlType, pointerToStruct):
+    def DevControlEx(self, controlType, userStruct):
         '''
         Data objects that do not fit into a simple 32-bit number can be written using this function. Meaning and 
         layout of the data depend on the ControlType.
         
         Usage: Control(self, controlType, value)
-             controlType: type of value to set
-             pointerToStruct: tAlpDynSynchOutGate structure containing synch parameters.
-                 Create an tAlpDynSynchOutGate object and pass it to the function using ctypes.byref function.
-                 (Requires importing ctypes)
-                 
+        
+        PARAMETERS
+        ----------
+        
+        controlType : ctypes c_ulong
+                      Specifies the type of value to set.
+        userStruct : tAlpDynSynchOutGate structure 
+                     It contains synch parameters.
+               
+                     
+        SEE ALSO
+        --------
+        
         See AlpDevControlEx in the ALP API description for control types.
         '''
-        self._checkError(self._ALPLib.AlpDevControlEx(self.ALP_ID,  controlType, pointerToStruct),'Error sending request.')
+        self._checkError(self._ALPLib.AlpDevControlEx(self.ALP_ID,  controlType, userStruct.byref()),'Error sending request.')
      
     def ProjControl(self,  controlType, value):
         '''
