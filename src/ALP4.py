@@ -629,7 +629,7 @@ class ALP4():
         
         inquireType : ctypes c_ulong
                       Sepcifies the type of value to return.
-        SequenceId : ctyles c_long, optional
+        SequenceId : ctypes c_long, optional
                      Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
         
         RETURNS
@@ -702,8 +702,17 @@ class ALP4():
         by the AlpProjHalt function.
         
         Usage: Control(self, controlType, value)
-            controlType: type of value to set
-            value: value to set.
+        
+        PARAMETERS
+        ----------
+        controlType : attribute flag (ctypes c_ulong)
+                      Specify the paramter to set.
+            
+        value : c_double
+                Value of the parameter to set.
+            
+        SEE ALSO
+        --------
         
         See AlpProjControl in the ALP API description for control types.
         '''
@@ -740,10 +749,23 @@ class ALP4():
         It  is  allowed  to  change  settings  of  sequences  that  are  currently  in  use.  
         However  the  new  settings become effective after restart using AlpProjStart or AlpProjStartCont.
         
-        Usage: Control(self, controlType, value,  SequenceId = None)
+        Usage: SeqControl(self, controlType, value,  SequenceId = None)
+        
+        PARAMETERS
+        ----------
 
-            inquireType: type of value to return:    
+        controlType : attribute flag (ctypes c_ulong)
+            Specify the paramter to set. 
+            
+        value : ctypes c_double
+                Value of the parameter to set.
+                
+        SequenceId : ctypes c_long, optional
+                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+    
 
+        SEE ALSO
+        --------
         
         See AlpSeqControl in the ALP API description for control types.
         '''
@@ -760,9 +782,13 @@ class ALP4():
         Frees a previously allocated sequence. The ALP memory reserved for the specified sequence in the device DeviceId is released.
         
         
-        Usage: FreeSeq( SequenceId = None)
+        Usage: FreeSeq(SequenceId = None)
         
-             SequenceId: Id of the sequence to free. If not specified, free the last uploaded sequence.
+        PARAMETERS
+        ----------
+        
+        SequenceId : ctypes c_long, optional
+                     Identified of the sequence. If not specified, free the last sequence allocated in the DMD board memory
         '''
         
         if ( SequenceId == None) and (self._lastDDRseq):
