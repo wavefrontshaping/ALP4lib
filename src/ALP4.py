@@ -541,12 +541,12 @@ class ALP4():
         return ret.value()
         
             
-    def SeqInquire(self,request,   SequenceId = None):
+    def SeqInquire(self, inquireType,   SequenceId = None):
         '''
         Ask the controller board the value of a specified parameter about an image sequence.
         
         
-        Usage: Inquire(self, request,  SequenceId = None)
+        Usage: Inquire(self, inquireType,  SequenceId = None)
         
         PARAMETERS
         ----------
@@ -554,13 +554,13 @@ class ALP4():
         request : ctypes c_ulong
                   Sepcifies the type of value to return.
         SequenceId : ctyles c_long, optional
-                    Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
         
         RETURNS
         -------
         
         value : c_double
-                Value of the requiested parameter.
+                Value of the requested parameter.
                 
         
         SEE ALSO
@@ -572,17 +572,30 @@ class ALP4():
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
             
-        self._checkError(self._ALPLib.AlpSeqInquire(self.ALP_ID,   SequenceId, request, ct.byref(ret)),'Error sending request.')
+        self._checkError(self._ALPLib.AlpSeqInquire(self.ALP_ID,   SequenceId, inquireType, ct.byref(ret)),'Error sending request.')
         return ret.value()
         
     def ProjInquire(self, inquireType, SequenceId = None):
         '''
-        This function provides information about general ALP settings for the sequence display.
+        Usage: ProjInquire(self, inquireType, SequenceId = None)
         
-        Usage: Inquire(self, request,  SequenceId = None)
-            request: type of value to return.
-            SequenceId: Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
-            
+        PARAMETERS
+        ----------
+        
+        request : ctypes c_ulong
+                  Sepcifies the type of value to return.
+        SequenceId : ctyles c_long, optional
+                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+        
+        RETURNS
+        -------
+        
+        value : c_double
+                Value of the requested parameter.
+                
+        
+        SEE ALSO
+        --------            
         See AlpProjInquire in the ALP API description for request types.
         '''
         ret = ct.c_double(0)
@@ -598,13 +611,25 @@ class ALP4():
         Data objects that do not fit into a simple 32-bit number can be inquired using this function. 
         Meaning and layout of the data depend on the InquireType.
         
-        Usage: Inquire(self, request,  SequenceId = None)
-            request: type of value to return.
-            UserStructPtr: pointer to a data structure which shall be filled out by AlpSeqInquireEx.
-                Pass the AlpSeqInquireEx as a pointer using ctypes.byref (requires importing ctypes)
-            SequenceId: Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
-            
+        Usage: ProjInquireEx(self, inquireType, UserStructPtr, SequenceId = None)
+        
+        PARAMETERS
+        ----------
+        
+        request : ctypes c_ulong
+                  Sepcifies the type of value to return.
+        UserStructPtr: ctypes POINTER
+                       Pointer to a data structure which shall be filled out by AlpSeqInquireEx.
+                       Pass the AlpSeqInquireEx as a pointer using ctypes.byref (requires importing ctypes)
+        SequenceId : ctyles c_long, optional
+                    Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+        
+               
+        
+        SEE ALSO
+        --------            
         See AlpProjInquireEx in the ALP API description for request types.
+        '''
         '''
         ret = ct.c_double(0)
         
