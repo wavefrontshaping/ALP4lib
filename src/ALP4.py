@@ -519,13 +519,24 @@ class ALP4():
             
         self._checkError(self._ALPLib.AlpSeqTiming(self.ALP_ID,  SequenceId, ct.c_long(illuminationTime), ct.c_long(pictureTime), ct.c_long(synchDelay), ct.c_long(synchPulseWidth), ct.c_long(triggerInDelay)),'Cannot set timing.')
 
-    def DevInquire(self, query):
+    def DevInquire(self, inquireType):
         '''
         Ask the controller board the value of a specified parameter about the ALP device.
         
         Usage: Inquire(request)
-            request: type of value to return
         
+        PARAMETERS
+        ----------
+        
+        inquireType : ctypes c_ulong
+                      Sepcifies the type of value to return.
+        
+                      
+        RETURNS
+        -------
+        
+        value : c_double
+                Value of the requested parameter.
             
         SEE ALSO
         --------
@@ -537,7 +548,7 @@ class ALP4():
             
         ret = ct.c_double(0)
         
-        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, query, ct.byref(ret)),'Error sending request.')
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, inquireType, ct.byref(ret)),'Error sending request.')
         return ret.value()
         
             
@@ -551,7 +562,7 @@ class ALP4():
         PARAMETERS
         ----------
         
-        request : ctypes c_ulong
+        inquireType : ctypes c_ulong
                   Sepcifies the type of value to return.
         SequenceId : ctyles c_long, optional
                      Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
@@ -606,7 +617,7 @@ class ALP4():
         self._checkError(self._ALPLib.AlpProjInquire(self.ALP_ID,   SequenceId, inquireType, ct.byref(ret)),'Error sending request.')
         return ret.value()        
 
-    def ProjInquireEx(self, inquireType, UserStructPtr, SequenceId = None):
+    def ProjInquireEx(self, inquireType, SequenceId = None):
         '''
         Data objects that do not fit into a simple 32-bit number can be inquired using this function. 
         Meaning and layout of the data depend on the InquireType.
@@ -618,26 +629,27 @@ class ALP4():
         
         request : ctypes c_ulong
                   Sepcifies the type of value to return.
-        UserStructPtr: ctypes POINTER
-                       Pointer to a data structure which shall be filled out by AlpSeqInquireEx.
-                       Pass the AlpSeqInquireEx as a pointer using ctypes.byref (requires importing ctypes)
         SequenceId : ctyles c_long, optional
                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
         
-               
+        RETURNS
+        -------
+        
+        UserStructPtr : ctypes POINTER
+                        Pointer to a data structure which shall be filled out by AlpSeqInquireEx.
+                       
         
         SEE ALSO
         --------            
         See AlpProjInquireEx in the ALP API description for request types.
         '''
-        '''
-        ret = ct.c_double(0)
+        UserStructPtr = ct.c_double(0)
         
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
             
-        self._checkError(self._ALPLib.AlpProjInquire(self.ALP_ID,  SequenceId, inquireType, ct.byref(ret)),'Error sending request.')
-        return ret         
+        self._checkError(self._ALPLib.AlpProjInquire(self.ALP_ID,  SequenceId, inquireType, ct.byref(UserStructPtr)),'Error sending request.')
+        return UserStructPtr         
         
     def DevControl(self, controlType,value):
         '''
@@ -645,7 +657,11 @@ class ALP4():
         The  default  values  are  assigned during device allocation by AllocateSequence.
         
         Usage: Control(self, controlType, value)
-            controlType: type of value to set
+        
+        PARAMETERS
+        ----------
+        
+        controlType: type of value to set
             value: value to set
         
         See AlpDevControl in the ALP API description for control types.
