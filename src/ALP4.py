@@ -716,7 +716,7 @@ class ALP4():
         
         See AlpProjControl in the ALP API description for control types.
         '''
-        self._checkError(self._ALPLib.AlpProjControl(self.ALP_ID, controlType, ct.c_lont(value)),'Error sending request.')
+        self._checkError(self._ALPLib.AlpProjControl(self.ALP_ID, controlType, ct.c_long(value)),'Error sending request.')
  
     def ProjControlEx(self,  controlType, pointerToStruct):
         '''
