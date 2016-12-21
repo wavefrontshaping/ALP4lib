@@ -22,52 +22,52 @@ ALP_NOT_ONLINE         = 1001		#	The specified ALP has not been found or is not 
 
 ## AlpDevInquire 
 
-ALP_DEVICE_NUMBER = 2000	#	Serial number of the ALP device */
-ALP_VERSION = 2001	#	Version number of the ALP device */
-ALP_DEV_STATE =			2002	#	current ALP status, see above */
-ALP_AVAIL_MEMORY =		2003	#	ALP on-board sequence memory available for further sequence */
-										#	allocation (AlpSeqAlloc); number of binary pictures */
-# Temperatures. Data format: signed long with 1 LSB=1/256 degrees C */
-ALP_DDC_FPGA_TEMPERATURE =	2050	# V4100 Rev B: LM95231. External channel: DDC FPGAs Temperature Diode */
-ALP_APPS_FPGA_TEMPERATURE	 = 2051	# V4100 Rev B: LM95231. External channel: Application FPGAs Temperature Diode */
-ALP_PCB_TEMPERATURE = 		2052	# V4100 Rev B: LM95231. Internal channel. "Board temperature" */
+ALP_DEVICE_NUMBER = 2000	#	Serial number of the ALP device 
+ALP_VERSION = 2001	#	Version number of the ALP device 
+ALP_DEV_STATE =			2002	#	current ALP status, see above 
+ALP_AVAIL_MEMORY =		2003	#	ALP on-board sequence memory available for further sequence 
+										#	allocation (AlpSeqAlloc); number of binary pictures 
+# Temperatures. Data format: signed long with 1 LSB=1/256 degrees C 
+ALP_DDC_FPGA_TEMPERATURE =	2050	# V4100 Rev B: LM95231. External channel: DDC FPGAs Temperature Diode 
+ALP_APPS_FPGA_TEMPERATURE	 = 2051	# V4100 Rev B: LM95231. External channel: Application FPGAs Temperature Diode 
+ALP_PCB_TEMPERATURE = 		2052	# V4100 Rev B: LM95231. Internal channel. "Board temperature" 
 
-#	AlpDevControl - ControlTypes & ControlValues */
-ALP_SYNCH_POLARITY	= 2004 #  Select frame synch output signal polarity */
-ALP_TRIGGER_EDGE =		2005	#  Select active input trigger edge (slave mode) */
-ALP_LEVEL_HIGH	 =		2006	#  Active high synch output */
-ALP_LEVEL_LOW	=		2007	#  Active low synch output */
-ALP_EDGE_FALLING =		2008	#  High to low signal transition */
-ALP_EDGE_RISING =		2009	#  Low to high signal transition */
+#	AlpDevControl - ControlTypes & ControlValues 
+ALP_SYNCH_POLARITY	= 2004 #  Select frame synch output signal polarity 
+ALP_TRIGGER_EDGE =		2005	#  Select active input trigger edge (slave mode) 
+ALP_LEVEL_HIGH	 =		2006	#  Active high synch output 
+ALP_LEVEL_LOW	=		2007	#  Active low synch output 
+ALP_EDGE_FALLING =		2008	#  High to low signal transition 
+ALP_EDGE_RISING =		2009	#  Low to high signal transition 
 
-ALP_TRIGGER_TIME_OUT =	2014	#	trigger time-out (slave mode) */
-ALP_TIME_OUT_ENABLE 	=   0	#	Time-out enabled (default) */
+ALP_TRIGGER_TIME_OUT =	2014	#	trigger time-out (slave mode) 
+ALP_TIME_OUT_ENABLE 	=   0	#	Time-out enabled (default) 
 ALP_TIME_OUT_DISABLE =	   1	#	Time-out disabled */
 
-ALP_USB_CONNECTION =		2016	#	Re-connect after a USB interruption */
+ALP_USB_CONNECTION =		2016	#	Re-connect after a USB interruption 
 
-ALP_DEV_DMDTYPE =			2021	#	Select DMD type; only allowed for a new allocated ALP-3 device */
-ALP_DMDTYPE_XGA =			   1	#	1024*768 mirror pixels (0.7" Type A, D3000) */
-ALP_DMDTYPE_SXGA_PLUS =	   2	#	1400*1050 mirror pixels (0.95" Type A, D3000) */
-ALP_DMDTYPE_1080P_095A =	   3	#	1920*1080 mirror pixels (0.95" Type A, D4x00) */
-ALP_DMDTYPE_XGA_07A	=	   4	#	1024*768 mirror pixels (0.7" Type A, D4x00) */
-ALP_DMDTYPE_XGA_055A	 =  5 #	1024*768 mirror pixels (0.55" Type A, D4x00) */
-ALP_DMDTYPE_XGA_055X	 =  6	#	1024*768 mirror pixels (0.55" Type X, D4x00) */
-ALP_DMDTYPE_WUXGA_096A =	   7	#	1920*1200 mirror pixels (0.96" Type A, D4100) */
-ALP_DMDTYPE_WQXGA_400MHZ_090A = 8 #	2560*1600 mirror pixels (0.90" Type A, DLPC910) at standard clock rate (400 MHz) */
-ALP_DMDTYPE_WQXGA_480MHZ_090A = 9 #	WQXGA at extended clock rate (480 MHz); WARNING: This mode requires temperature control of DMD */
-ALP_DMDTYPE_DISCONNECT = 255 #	behaves like 1080p (D4100) */
+ALP_DEV_DMDTYPE =			2021	#	Select DMD type; only allowed for a new allocated ALP-3 device 
+ALP_DMDTYPE_XGA =			   1	#	1024*768 mirror pixels (0.7" Type A, D3000) 
+ALP_DMDTYPE_SXGA_PLUS =	   2	#	1400*1050 mirror pixels (0.95" Type A, D3000) 
+ALP_DMDTYPE_1080P_095A =	   3	#	1920*1080 mirror pixels (0.95" Type A, D4x00) 
+ALP_DMDTYPE_XGA_07A	=	   4	#	1024*768 mirror pixels (0.7" Type A, D4x00) 
+ALP_DMDTYPE_XGA_055A	 =  5 #	1024*768 mirror pixels (0.55" Type A, D4x00) 
+ALP_DMDTYPE_XGA_055X	 =  6	#	1024*768 mirror pixels (0.55" Type X, D4x00) 
+ALP_DMDTYPE_WUXGA_096A =	   7	#	1920*1200 mirror pixels (0.96" Type A, D4100) 
+ALP_DMDTYPE_WQXGA_400MHZ_090A = 8 #	2560*1600 mirror pixels (0.90" Type A, DLPC910) at standard clock rate (400 MHz) 
+ALP_DMDTYPE_WQXGA_480MHZ_090A = 9 #	WQXGA at extended clock rate (480 MHz); WARNING: This mode requires temperature control of DMD 
+ALP_DMDTYPE_DISCONNECT = 255 #	behaves like 1080p (D4100) 
 
-ALP_DEV_DISPLAY_HEIGHT = 2057	# number of mirror rows on the DMD */
-ALP_DEV_DISPLAY_WIDTH = 2058 # number of mirror columns on the DMD */
+ALP_DEV_DISPLAY_HEIGHT = 2057	# number of mirror rows on the DMD 
+ALP_DEV_DISPLAY_WIDTH = 2058 # number of mirror columns on the DMD 
 
-ALP_DEV_DMD_MODE = 2064	# query/set DMD PWR_FLOAT mode, valid options: ALP_DMD_RESUME (normal operation: "wake up DMD"), ALP_DMD_POWER_FLOAT */
-ALP_DMD_RESUME	=         0	# default mode, Wake up DMD; Auto-Shutdown on loss of supply voltage safely switches off DMD */
-ALP_DMD_POWER_FLOAT =    1	# power down, release micro mirrors from deflected state */
+ALP_DEV_DMD_MODE = 2064	# query/set DMD PWR_FLOAT mode, valid options: ALP_DMD_RESUME (normal operation: "wake up DMD"), ALP_DMD_POWER_FLOAT 
+ALP_DMD_RESUME	=         0	# default mode, Wake up DMD; Auto-Shutdown on loss of supply voltage safely switches off DMD 
+ALP_DMD_POWER_FLOAT =    1	# power down, release micro mirrors from deflected state 
 
-ALP_PWM_LEVEL = 		2063	# PWM pin duty-cycle as percentage: 0..100%; after AlpDevAlloc: 0% */
+ALP_PWM_LEVEL = 		2063	# PWM pin duty-cycle as percentage: 0..100%; after AlpDevAlloc: 0% 
 
-# AlpDevControlEx */
+# AlpDevControlEx 
 ALP_DEV_DYN_SYNCH_OUT1_GATE = 2023
 ALP_DEV_DYN_SYNCH_OUT2_GATE = 2024
 ALP_DEV_DYN_SYNCH_OUT3_GATE = 2025
@@ -80,89 +80,92 @@ class tAlpDynSynchOutGate(ct.Structure):
         ("Gate",ct.c_ubyte*16)] # #Period number of bytes; each one is 0 or 1
                                 #Period bytes are used!
 
-# AlpSeqControl - ControlTypes */
-ALP_SEQ_REPEAT	=		2100	#	Non-continuous display of a sequence (AlpProjStart) allows */
-										#	for configuring the number of sequence iterations. */
-ALP_SEQ_REPETE = ALP_SEQ_REPEAT	#  According to the typo made in primary documentation (ALP API description) */
-ALP_FIRSTFRAME	=		2101	#	First image of this sequence to be displayed. */
-ALP_LASTFRAME =		2102	#	Last image of this sequence to be displayed. */
+# AlpSeqControl - ControlTypes 
+ALP_SEQ_REPEAT	=		2100	#	Non-continuous display of a sequence (AlpProjStart) allows 
+										#	for configuring the number of sequence iterations. 
+ALP_SEQ_REPETE = ALP_SEQ_REPEAT	#  According to the typo made in primary documentation (ALP API description) 
+ALP_FIRSTFRAME	=		2101	#	First image of this sequence to be displayed. 
+ALP_LASTFRAME =		2102	#	Last image of this sequence to be displayed. 
 
-ALP_BITNUM =				2103	#	A sequence can be displayed with reduced bit depth for faster speed. */
-ALP_BIN_MODE =			2104	#	Binary mode: select from ALP_BIN_NORMAL and ALP_BIN_UNINTERRUPTED (AlpSeqControl) */
+ALP_BITNUM =				2103	#	A sequence can be displayed with reduced bit depth for faster speed. 
+ALP_BIN_MODE =			2104	#	Binary mode: select from ALP_BIN_NORMAL and ALP_BIN_UNINTERRUPTED (AlpSeqControl) 
 
-ALP_BIN_NORMAL	 =		2105	#	Normal operation with progammable dark phase */
-ALP_BIN_UNINTERRUPTED =	2106	#	Operation without dark phase */
+ALP_BIN_NORMAL	 =		2105	#	Normal operation with progammable dark phase 
+ALP_BIN_UNINTERRUPTED =	2106	#	Operation without dark phase 
 
-ALP_PWM_MODE =		    2107	# ALP_DEFAULT, ALP_FLEX_PWM */
+ALP_PWM_MODE =		    2107	# ALP_DEFAULT, ALP_FLEX_PWM 
 ALP_FLEX_PWM =			   3	# ALP_PWM_MODE: all bit planes of the sequence are displayed as
 #	fast as possible in binary uninterrupted mode;
-#	use ALP_SLAVE mode to achieve a custom pulse-width modulation timing for generating gray-scale */
+#	use ALP_SLAVE mode to achieve a custom pulse-width modulation timing for generating gray-scale 
 
-ALP_DATA_FORMAT =			2110	#	Data format and alignment */
-ALP_DATA_MSB_ALIGN	=	   0	#	Data is MSB aligned (default) */
-ALP_DATA_LSB_ALIGN	=	   1	#	Data is LSB aligned */
-ALP_DATA_BINARY_TOPDOWN	= 2	#	Data is packed binary, top row first; bit7 of a byte = leftmost of 8 pixels */
-ALP_DATA_BINARY_BOTTOMUP =  3	#	Data is packed binary, bottom row first */
-		# XGA:   one pixel row occupies 128 byte of binary data. */
-		#        Byte0.Bit7 = top left pixel (TOPDOWN format) */
-		# 1080p and WUXGA: one pixel row occupies 256 byte of binary data. */
-		#        Byte0.Bit7 = top left pixel (TOPDOWN format) */
-		# SXGA+: one pixel row occupies 176 byte of binary data. First byte ignored. */
-		#        Byte1.Bit7 = top left pixel (TOPDOWN format) */
+ALP_DATA_FORMAT =			2110	#	Data format and alignment 
+ALP_DATA_MSB_ALIGN	=	   0	#	Data is MSB aligned (default) 
+ALP_DATA_LSB_ALIGN	=	   1	#	Data is LSB aligned 
+ALP_DATA_BINARY_TOPDOWN	= 2	#	Data is packed binary, top row first; bit7 of a byte = leftmost of 8 pixels 
+ALP_DATA_BINARY_BOTTOMUP =  3	#	Data is packed binary, bottom row first 
+		# XGA:   one pixel row occupies 128 byte of binary data. 
+		#        Byte0.Bit7 = top left pixel (TOPDOWN format) 
+		# 1080p and WUXGA: one pixel row occupies 256 byte of binary data. 
+		#        Byte0.Bit7 = top left pixel (TOPDOWN format) 
+		# SXGA+: one pixel row occupies 176 byte of binary data. First byte ignored. 
+		#        Byte1.Bit7 = top left pixel (TOPDOWN format) 
 
 ALP_SEQ_PUT_LOCK =		2119	# ALP_DEFAULT: Lock Sequence Memory in AlpSeqPut;
-#	Not ALP_DEFAULT: do not lock, instead allow writing sequence image data even currently displayed */
+#	Not ALP_DEFAULT: do not lock, instead allow writing sequence image data even currently displayed 
 
 
-ALP_FIRSTLINE =			2111	#	Start line position at the first image */
-ALP_LASTLINE =			2112	#	Stop line position at the last image */
-ALP_LINE_INC =			2113	#	Line shift value for the next frame */
-ALP_SCROLL_FROM_ROW	 =	2123	#	combined value from ALP_FIRSTFRAME and ALP_FIRSTLINE */
-ALP_SCROLL_TO_ROW =		2124	#	combined value from ALP_LASTFRAME and ALP_LASTLINE */
+ALP_FIRSTLINE =			2111	#	Start line position at the first image 
+ALP_LASTLINE =			2112	#	Stop line position at the last image 
+ALP_LINE_INC =			2113	#	Line shift value for the next frame 
+ALP_SCROLL_FROM_ROW	 =	2123	#	combined value from ALP_FIRSTFRAME and ALP_FIRSTLINE 
+ALP_SCROLL_TO_ROW =		2124	#	combined value from ALP_LASTFRAME and ALP_LASTLINE 
 
 #	Frame Look Up Table (FLUT): sequence settings select how to use the FLUT.
 #	The look-up table itself is shared across all sequences.
-#	(use ALP_FLUT_SET_MEMORY controls for accessing it) */
-ALP_FLUT_MODE =		2118	# Select Frame LookUp Table usage mode: */
-ALP_FLUT_NONE =		   0	# linear addressing, do not use FLUT (default) */
-ALP_FLUT_9BIT	=		   1	# Use FLUT for frame addressing: 9-bit entries */
-ALP_FLUT_18BIT	=		   2	# Use FLUT for frame addressing: 18-bit entries */
+#	(use ALP_FLUT_SET_MEMORY controls for accessing it) 
+ALP_FLUT_MODE =		2118	# Select Frame LookUp Table usage mode: 
+ALP_FLUT_NONE =		   0	# linear addressing, do not use FLUT (default) 
+ALP_FLUT_9BIT	=		   1	# Use FLUT for frame addressing: 9-bit entries 
+ALP_FLUT_18BIT	=		   2	# Use FLUT for frame addressing: 18-bit entries 
 
 ALP_FLUT_ENTRIES9 =		2120	# Determine number of FLUT entries; default=1
-#	Entries: supports all values from 1 to ALP_FLUT_MAX_ENTRIES9 */
+#	Entries: supports all values from 1 to ALP_FLUT_MAX_ENTRIES9 
 ALP_FLUT_OFFSET9 =		2122	# Determine offset of FLUT index; default=0
 #	Offset supports multiples of 256;
 #	For ALP_FLUT_18BIT, the effective index is half of the 9-bit index.
-#	--> "ALP_FLUT_ENTRIES18" and "ALP_FLUT_FRAME_OFFSET18" are 9-bit settings divided by 2 */
+#	--> "ALP_FLUT_ENTRIES18" and "ALP_FLUT_FRAME_OFFSET18" are 9-bit settings divided by 2 
 #	The API does not reject overflow! (FRAME_OFFSET+ENTRIES > MAX_ENTRIES).
-#	The user is responsible for correct settings. */
+#	The user is responsible for correct settings. 
 
-ALP_SEQ_DMD_LINES =		2125	# Area of Interest: Value = MAKELONG(StartRow, RowCount) */
+ALP_SEQ_DMD_LINES =		2125	# Area of Interest: Value = MAKELONG(StartRow, RowCount) 
 
-#  AlpSeqInquire */
-ALP_BITPLANES =			2200	#	Bit depth of the pictures in the sequence */
-ALP_PICNUM	=			2201	#	Number of pictures in the sequence */
-ALP_PICTURE_TIME =		2203	#	Time between the start of consecutive pictures in the sequence in microseconds, */
-										#	the corresponding in frames per second is */
-										#	picture rate [fps] = 1 000 000 / ALP_PICTURE_TIME [µs] */
-ALP_ILLUMINATE_TIME =		2204	#	Duration of the display of one picture in microseconds */
-ALP_SYNCH_DELAY =			2205	#	Delay of the start of picture display with respect */
-										#	to the frame synch output (master mode) in microseconds */
-ALP_SYNCH_PULSEWIDTH =	2206	#	Duration of the active frame synch output pulse in microseconds */
-ALP_TRIGGER_IN_DELAY =	2207	#	Delay of the start of picture display with respect to the */
-										#	active trigger input edge in microseconds */
-ALP_MAX_SYNCH_DELAY =		2209	#	Maximal duration of frame synch output to projection delay in microseconds */
-ALP_MAX_TRIGGER_IN_DELAY =	2210	#	Maximal duration of trigger input to projection delay in microseconds */
+def MAKELONG(StartRow, RowCount):
+    return StartRow+RowCount<<16
 
-ALP_MIN_PICTURE_TIME =	2211	#	Minimum time between the start of consecutive pictures in microseconds */
-ALP_MIN_ILLUMINATE_TIME =	2212	#	Minimum duration of the display of one picture in microseconds */
-										#	depends on ALP_BITNUM and ALP_BIN_MODE */
-ALP_MAX_PICTURE_TIME =	2213	#	Maximum value of ALP_PICTURE_TIME */
+#  AlpSeqInquire 
+ALP_BITPLANES =			2200	#	Bit depth of the pictures in the sequence 
+ALP_PICNUM	=			2201	#	Number of pictures in the sequence 
+ALP_PICTURE_TIME =		2203	#	Time between the start of consecutive pictures in the sequence in microseconds, 
+										#	the corresponding in frames per second is 
+										#	picture rate [fps] = 1 000 000 / ALP_PICTURE_TIME [µs] 
+ALP_ILLUMINATE_TIME =		2204	#	Duration of the display of one picture in microseconds 
+ALP_SYNCH_DELAY =			2205	#	Delay of the start of picture display with respect 
+										#	to the frame synch output (master mode) in microseconds 
+ALP_SYNCH_PULSEWIDTH =	2206	#	Duration of the active frame synch output pulse in microseconds 
+ALP_TRIGGER_IN_DELAY =	2207	#	Delay of the start of picture display with respect to the 
+										#	active trigger input edge in microseconds 
+ALP_MAX_SYNCH_DELAY =		2209	#	Maximal duration of frame synch output to projection delay in microseconds 
+ALP_MAX_TRIGGER_IN_DELAY =	2210	#	Maximal duration of trigger input to projection delay in microseconds 
 
-										#	ALP_PICTURE_TIME = ALP_ON_TIME + ALP_OFF_TIME */
-										#	ALP_ON_TIME may be smaller than ALP_ILLUMINATE_TIME */
-ALP_ON_TIME =				2214	#	Total active projection time */
-ALP_OFF_TIME =			2215	#	Total inactive projection time */
+ALP_MIN_PICTURE_TIME =	2211	#	Minimum time between the start of consecutive pictures in microseconds 
+ALP_MIN_ILLUMINATE_TIME =	2212	#	Minimum duration of the display of one picture in microseconds 
+										#	depends on ALP_BITNUM and ALP_BIN_MODE 
+ALP_MAX_PICTURE_TIME =	2213	#	Maximum value of ALP_PICTURE_TIME 
+
+										#	ALP_PICTURE_TIME = ALP_ON_TIME + ALP_OFF_TIME 
+										#	ALP_ON_TIME may be smaller than ALP_ILLUMINATE_TIME 
+ALP_ON_TIME =				2214	#	Total active projection time 
+ALP_OFF_TIME =			2215	#	Total inactive projection time 
 
 #  AlpProjInquire & AlpProjControl & ...Ex - InquireTypes, ControlTypes & Values */
 ALP_PROJ_MODE =			2300	#	Select from ALP_MASTER and ALP_SLAVE mode */
@@ -373,7 +376,8 @@ class ALP4():
 
         print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
             
-       
+
+
     def SeqAlloc(self, nbImg = 1, bitDepth = 1):
         '''
         This function provides ALP memory for a sequence of pictures. All pictures of a sequence have the 
@@ -460,12 +464,58 @@ class ALP4():
         if not SequenceId:
             SequenceId = self._lastDDRseq 
         
+#        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
+            
         data = ''.join(chr(int(x)) for x in imgData)
-        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)    
+        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
+#        data = bytes([int(x) for x in imgData])  
+#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
+
+#        data = bytes([int(x) for x in imgData])
+#        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
         
+
         self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
 
+
+    def ImgToBitPlane(self, imgArray, bitShift = 0):
+        '''
+        Create a bit plane from the imgArray.
+        The bit plane is an (nSizeX x nSizeY / 8) array containing only the bit values 
+        corresponding to the bit number bitShift.
+        For a bit depth = 8, 8 bit planes can be extracted from the imgArray bu iterating ImgToBitPlane.
         
+        Usage:
+            
+        ImgToBitPlane(imgArray,bitShift = 0)
+        
+        PARAMETERS
+        ----------
+        
+        imgArray: 1D array or list
+                  An image of the same resolution as the DMD (nSizeX by nSizeY).
+                  
+        bitShift: int, optional
+                  Bit plane to extract form the imgArray (0 to 8),
+                  Has to be <= bit depth.
+          
+        RETURNS
+        -------
+        
+        bitPlane: list
+                  Array (nSizeX x nSizeY)/8
+          
+          
+		 '''
+		 #bitPlane = [] 
+        bitPlane = [0]*(self.nSizeX*self.nSizeY//8)
+        for ind,value in enumerate(imgArray): 
+            bitPlane[(ind-ind%8)//8] += (2**(7-ind%8))*((int(value)>>bitShift)%2)
+#            if ind < 16:
+#                print('----')
+#                print('bitPlane[%d] = %d' %((ind-ind%8)//8,bitPlane[(ind-ind%8)//8]))
+        return bitPlane
+		   
         
     def SetTiming(self,  SequenceId = None, illuminationTime = None, pictureTime = None, synchDelay = None,
                   synchPulseWidth = None, triggerInDelay = None):
@@ -480,21 +530,22 @@ class ALP4():
         PARAMETERS
         ----------
         
-          SequenceId : c_ulong, optional
-                Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
-          illuminationTime: Display time of a single image of the sequence in microseconds. 
-                          If not specified, use the highest possible value compatible with pictureTime.
-          pictureTime : int, optional
-                     Time between the start of two consecutive picture, up to 10^7 microseconds = 10 seconds.
-                     With illuminationTime, it sets the display rate.
-                     If not specified, the value is set to minimize the dark time according illuminationTime.
-                     If illuminationTime is also not specified, set to a frame rate of 30Hz.
-          synchDelay : Specifies the time delay between the start of the output sync pulse and the start of the display (master mode).
-                    Value between 0 and 130,000 microseconds. Set to 0 if not specified.
-          synchPulseWidth : Duration of the sync output pulse. 
+        SequenceId : c_ulong, optional
+                       Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
+        illuminationTime: c_ulong, optional
+                           Display time of a single image of the sequence in microseconds. 
+                          I f not specified, use the highest possible value compatible with pictureTime.
+        pictureTime : int, optional
+                        Time between the start of two consecutive picture, up to 10^7 microseconds = 10 seconds.
+                        With illuminationTime, it sets the display rate.
+                        If not specified, the value is set to minimize the dark time according illuminationTime.
+                        If illuminationTime is also not specified, set to a frame rate of 30Hz.
+        synchDelay : Specifies the time delay between the start of the output sync pulse and the start of the display (master mode).
+                       Value between 0 and 130,000 microseconds. Set to 0 if not specified.
+        synchPulseWidth : Duration of the sync output pulse. 
                          By default equals synchDelay + illuminationTime in normal mode.
                          By default equals ALP_ILLUMINATION_TIME in binary uninterrupted mode.
-          triggerInDelay : Length of the trigger signal in microseconds, set to 0 by default.
+        triggerInDelay : Length of the trigger signal in microseconds, set to 0 by default.
         
             
         SEE ALSO
@@ -570,7 +621,7 @@ class ALP4():
         RETURNS
         -------
         
-        value : c_double
+        value : int
                 Value of the requested parameter.
                 
         
@@ -578,13 +629,13 @@ class ALP4():
         --------            
         See AlpSeqInquire in the ALP API description for request types.
         '''
-        ret = ct.c_double(0)
+        ret = ct.c_long(0)
         
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
             
         self._checkError(self._ALPLib.AlpSeqInquire(self.ALP_ID,   SequenceId, inquireType, ct.byref(ret)),'Error sending request.')
-        return ret.value()
+        return ret.value
         
     def ProjInquire(self, inquireType, SequenceId = None):
         '''
@@ -601,7 +652,7 @@ class ALP4():
         RETURNS
         -------
         
-        value : c_double
+        value : int
                 Value of the requested parameter.
                 
         
@@ -609,13 +660,13 @@ class ALP4():
         --------            
         See AlpProjInquire in the ALP API description for request types.
         '''
-        ret = ct.c_double(0)
+        ret = ct.c_long(0)
         
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
             
         self._checkError(self._ALPLib.AlpProjInquire(self.ALP_ID,   SequenceId, inquireType, ct.byref(ret)),'Error sending request.')
-        return ret.value()        
+        return ret.value       
 
     def ProjInquireEx(self, inquireType, SequenceId = None):
         '''
