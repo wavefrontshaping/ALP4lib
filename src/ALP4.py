@@ -485,6 +485,10 @@ class ALP4():
         corresponding to the bit number bitShift.
         For a bit depth = 8, 8 bit planes can be extracted from the imgArray bu iterating ImgToBitPlane.
         
+        WARNING: This function is slow. It is advised not to use it in a loop to convert a sequence
+        of image arrays to bit planes. Use for tests only. It is recommended to directly generate images
+        as bitplanes.
+        
         Usage:
             
         ImgToBitPlane(imgArray,bitShift = 0)
@@ -507,13 +511,9 @@ class ALP4():
           
           
 		 '''
-		 #bitPlane = [] 
         bitPlane = [0]*(self.nSizeX*self.nSizeY//8)
         for ind,value in enumerate(imgArray): 
             bitPlane[(ind-ind%8)//8] += (2**(7-ind%8))*((int(value)>>bitShift)%2)
-#            if ind < 16:
-#                print('----')
-#                print('bitPlane[%d] = %d' %((ind-ind%8)//8,bitPlane[(ind-ind%8)//8]))
         return bitPlane
 		   
         
