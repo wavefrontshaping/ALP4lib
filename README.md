@@ -18,6 +18,12 @@ Please read the ALP API description provided with the [Vialux](http://www.vialux
 
 **Warning:** Still display issues with Python 3.X, a fix is on its way. 
 
+## Citing the code
+
+If the code was helpful to your work, please consider citing it:
+[![DOI](https://zenodo.org/badge/70229567.svg)](https://zenodo.org/badge/latestdoi/70229567)
+
+
 ## Installation
 
 ### Manual installation 
