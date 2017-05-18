@@ -318,7 +318,7 @@ class ALP4():
             libPath += 'alp4395.dll'
             
         
-        print('Loading linrary: ' + libPath)
+        print(('Loading linrary: ' + libPath))
 
         self._ALPLib = ct.CDLL(libPath)   
             
@@ -374,7 +374,7 @@ class ALP4():
         else:
             self._raiseError("DMD Type not supported or unknown.")
 
-        print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
+        print(('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.'))
             
 
 
