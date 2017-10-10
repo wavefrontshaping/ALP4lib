@@ -8,8 +8,7 @@ Created on Wed Oct 05 15:48:53 2016
 
 import ctypes as ct
 import platform
-
-
+import numpy as np
 
 ## Standard parameter
 ALP_DEFAULT  = 0
@@ -466,15 +465,18 @@ class ALP4():
         
 #        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
             
-        data = ''.join(chr(int(x)) for x in imgData)
-        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
-#        data = bytes([int(x) for x in imgData])  
-#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
+#        data = ''.join(chr(int(x)) for x in imgData)
+#        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
 
 #        data = bytes([int(x) for x in imgData])
 #        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
-        
-
+        if isinstance(imgData,np.ndarray):
+            c_ubyte_p = ct.POINTER(ct.c_ubyte)
+            imgData = imgData.astype(np.byte)
+            pImageData = imgData.ctypes.data_as(c_ubyte_p)
+        else:
+            data = bytes([int(x) for x in imgData])  #operation that takes forever
+            pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
         self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
 
 
