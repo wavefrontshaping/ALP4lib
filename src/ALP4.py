@@ -10,6 +10,7 @@ import ctypes as ct
 import platform
 import numpy as np
 
+
 ## Standard parameter
 ALP_DEFAULT  = 0
 
@@ -288,6 +289,24 @@ ALP_ERRORS = {1001:'The specified ALP device has not been found or is not ready.
                     1019:'Support in ALP drivers missing. Update drivers and power-cycle device.',
                     1020:'SDRAM Initialization failed.'}
 
+def afficheur(bitPlane):
+    nSizeX = 2560
+    nSizeY = 1600    
+    display = np.zeros((nSizeY,nSizeX))
+    for jj in range(nSizeY):
+        for ii in range(nSizeX/8):
+            line = []
+            Q = bitPlane[jj * nSizeX/8 + ii]
+            R = [0 ,0, 0, 0, 0, 0, 0, 0]
+            k = 7
+            while Q != 0:
+                R[k] = (Q % 2)
+                Q = Q // 2
+                k -=1
+            for ll in range(8):
+                display[jj,ii*8 + ll] = R[ll]
+    return display
+
 class ALP4():
     """
     This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
@@ -317,7 +336,7 @@ class ALP4():
             libPath += 'alp4395.dll'
             
         
-        print('Loading linrary: ' + libPath)
+        print('Loading library: ' + libPath)
 
         self._ALPLib = ct.CDLL(libPath)   
             
@@ -330,7 +349,8 @@ class ALP4():
         self.DMDType = ct.c_long(0)
         # Pointer to the last stored image sequence
         self._lastDDRseq = None
-        
+        # List of all Sequences
+        self.Seqs = []
         
     def _checkError(self, returnValue, errorString, warning = False):
         if not (returnValue == ALP_OK):
@@ -411,7 +431,7 @@ class ALP4():
         '''
 
         SequenceId = ct.c_long(0)
-        
+        self.Seqs.append(SequenceId) # Put SequenceId in list of all Sequences to keep track of them
         # Allocate memory on the DDR RAM for the sequence of image.
         self._checkError(self._ALPLib.AlpSeqAlloc(self.ALP_ID, ct.c_long(bitDepth), ct.c_long(nbImg), ct.byref( SequenceId)),'Cannot allocate image sequence.')
         
@@ -419,7 +439,7 @@ class ALP4():
         self._lastDDRseq =  SequenceId
         return  SequenceId
         
-    def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0):
+    def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0, dataFormat = 'Python' ):
         '''
         This  function  allows  loading user  supplied  data  via  the  USB  connection  into  the  ALP  memory  of  a 
         previously allocated sequence (AlpSeqAlloc) or a part of such a sequence. The loading operation can 
@@ -453,6 +473,11 @@ class ALP4():
                  Depends on ALP_DATA_FORMAT.
                  PicLoad = 0 correspond to a complete sequence.
                  By default, PicLoad = 0.
+        dataFormat : string, optional
+                 Specify the type of data sent as image.
+                 Should be ' Python' or 'C'.
+                 If the data is of Python format, it is converted into a C array before sending to the DMD via the dll.                 
+                 By default dataFormat = 'Python'
                 
         SEE ALSO
         --------
@@ -465,18 +490,32 @@ class ALP4():
         
 #        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
             
-#        data = ''.join(chr(int(x)) for x in imgData)
-#        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
+        if dataFormat == 'Python':  
+            pImageData = (ct.c_ubyte*imgData.size)()
+            for ind,x in enumerate(imgData):
+                pImageData[ind] = x
+#            data = ''.join(chr(int(x)) for x in imgData)
+#            pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
+        elif dataFormat == 'C':
+            pImageData = ct.cast(imgData,ct.c_void_p)  
+            
+#        data = bytes([int(x) for x in imgData])  
+#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
+
+            for ind,x in enumerate(imgData):
+                pImageData[ind] = x
+#            data = ''.join(chr(int(x)) for x in imgData)
+#            pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
+        elif dataFormat == 'C':
+            pImageData = ct.cast(imgData,ct.c_void_p)  
+            
+#        data = bytes([int(x) for x in imgData])  
+#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
 
 #        data = bytes([int(x) for x in imgData])
 #        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
-        if isinstance(imgData,np.ndarray):
-            c_ubyte_p = ct.POINTER(ct.c_ubyte)
-            imgData = imgData.astype(np.byte)
-            pImageData = imgData.ctypes.data_as(c_ubyte_p)
-        else:
-            data = bytes([int(x) for x in imgData])  #operation that takes forever
-            pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
+        
+
         self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
 
 
@@ -536,7 +575,7 @@ class ALP4():
                        Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
         illuminationTime: c_ulong, optional
                            Display time of a single image of the sequence in microseconds. 
-                          I f not specified, use the highest possible value compatible with pictureTime.
+                           If not specified, use the highest possible value compatible with pictureTime.
         pictureTime : int, optional
                         Time between the start of two consecutive picture, up to 10^7 microseconds = 10 seconds.
                         With illuminationTime, it sets the display rate.
@@ -847,7 +886,7 @@ class ALP4():
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
             
-            
+        self.Seqs.remove(SequenceId) # Removes the last SequenceId from sequence list
         self._checkError(self._ALPLib.AlpSeqFree(self.ALP_ID, SequenceId),'Unable to free the image sequence.', warning = True)
         
     def Run(self,  SequenceId = None, loop = True):
