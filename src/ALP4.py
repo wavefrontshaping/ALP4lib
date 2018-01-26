@@ -488,32 +488,15 @@ class ALP4():
         if not SequenceId:
             SequenceId = self._lastDDRseq 
         
-#        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
             
         if dataFormat == 'Python':  
             pImageData = (ct.c_ubyte*imgData.size)()
             for ind,x in enumerate(imgData):
                 pImageData[ind] = x
-#            data = ''.join(chr(int(x)) for x in imgData)
-#            pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
         elif dataFormat == 'C':
             pImageData = ct.cast(imgData,ct.c_void_p)  
             
-#        data = bytes([int(x) for x in imgData])  
-#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
-
-            for ind,x in enumerate(imgData):
-                pImageData[ind] = x
-#            data = ''.join(chr(int(x)) for x in imgData)
-#            pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
-        elif dataFormat == 'C':
-            pImageData = ct.cast(imgData,ct.c_void_p)  
-            
-#        data = bytes([int(x) for x in imgData])  
-#        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
-
-#        data = bytes([int(x) for x in imgData])
-#        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
+    
         
 
         self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
