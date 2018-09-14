@@ -21,6 +21,7 @@ Please read the ALP API description provided with the [Vialux](http://www.vialux
 ## Citing the code
 
 If the code was helpful to your work, please consider citing it:
+
 [![DOI](https://zenodo.org/badge/70229567.svg)](https://zenodo.org/badge/latestdoi/70229567)
 
 
