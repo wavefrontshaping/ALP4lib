@@ -57,7 +57,7 @@ from ALP4 import *
 import time
 
 # Load the Vialux .dll
-DMD = ALP4(version = '4.3', libDir = 'C:/Program Files/ALP-4.3/ALP-4.3 API')
+DMD = ALP4(version = '4.3', libDir = 'C:/Program Files/ALP-4.3/ALP-4.3.dll')
 # Initialize the device
 DMD.Initialize()
 
