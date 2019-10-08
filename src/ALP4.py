@@ -269,6 +269,15 @@ ALP_FLAG_SEQUENCE_INDEFINITE =	ct.c_ulong(4)	#AlpProjStartCont: this sequence ru
 ALP_FLAG_FRAME_FINISHED	=		ct.c_ulong(8)	#illumination of last frame finished, picture time still progressing 
 ALP_FLAG_RSVD0 =				ct.c_ulong(16)    # reserved
 
+# for AlpSeqPutEx(): 
+class tAlpLinePut(ct.Structure):
+     _fields_ = [("TransferMode",ct.c_long), # common first member of AlpSeqPutEx' UserStructPtr argument
+                 ("PicOffset",ct.c_long),
+                 ("PicLoad",ct.c_long),
+                 ("LineOffset",ct.c_long),
+                 ("LineLoad",ct.c_long)]
+
+ALP_PUT_LINES =     ct.c_ulong(1)
 
 
 ALP_ERRORS = {1001:'The specified ALP device has not been found or is not ready.',
@@ -438,8 +447,83 @@ class ALP4():
         
         self._lastDDRseq =  SequenceId
         return  SequenceId
+
+    def SeqPutEx(self, imgData, LineOffset, LineLoad, SequenceId = None, PicOffset = 0, PicLoad = 0, dataFormat = 'Python'):
+        '''
+        Image data transfer using AlpSeqPut is based on whole DMD frames. Applications that only
+        update small regions inside a frame suffer from overhead of this default behavior. An extended 
+        ALP API function is available to reduce this overhead.
+
+        The AlpSeqPutEx function offers the same functionality as the standard function (AlpSeqPut), 
+        but in addition, it is possible to select a section within a sequence frame using the
+        LineOffset and LineLoad parameters of the tAlpLinePut data-structure (see below) and update 
+        only this section of the SDRAM-memory associated with the sequence for a range of
+        sequence-pictures (selected via the PicOffset and PicLoad parameters of tAlpLinePut in 
+        similarity to AlpSeqPut).
+
+        This results in accelerated transfer-time of small image data updates (due to the fact that the
+        amount of transferred data is reduced).
+
+        Therefore, the user only passes the lines of the pictures he wants to update via the UserArrayPtr
+        (that would be PicLoad*LineLoad lines in total).
+
+        PARAMETERS
+        ----------
         
-    def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0, dataFormat = 'Python' ):
+        imgData : list, 1D array or 1D ndarray
+                  Data stream corresponding to a sequence of nSizeX by nSizeX images.
+                  Values has to be between 0 and 255.
+        LineOffset : int
+                     Defines the offset of the frame-section. The frame-data of this section is transferred
+                     for each of the frames selected with PicOffset and PicLoad. The value of this 
+                     parameter must be greater or equal to zero, otherwise ALP_PARM_INVALID is returned.
+        LineLoad : int
+                   Defines the size of the frame-section. If the value of the parameter is
+                   less than zero or if LineOffset+LineLoad exceeds the number of lines
+                   per sequence-frame, ALP_PARM_INVALID is returned. If LineLoad is
+                   zero, this value is adjusted to include all lines of the frame, starting at
+                   line LineOffset
+        SequenceId : ctypes c_long
+                     Sequence identifier. If not specified, set the last sequence allocated in the DMD board memory
+        PicOffset : int, optional
+                    Picture number in the sequence (starting at 0) where the data upload is 
+                    started; the meaning depends upon ALP_DATA_FORMAT.
+                    By default, PifOffset = 0.
+        PicLoad : int, optional
+                 number of pictures that are to be loaded into the sequence memory. 
+                 Depends on ALP_DATA_FORMAT.
+                 PicLoad = 0 correspond to a complete sequence.
+                 By default, PicLoad = 0.
+        dataFormat : string, optional
+                 Specify the type of data sent as image.
+                 Should be ' Python' or 'C'.
+                 If the data is of Python format, it is converted into a C array before sending to the DMD via the dll.                 
+                 By default dataFormat = 'Python'
+        '''
+
+        if not SequenceId:
+            SequenceId = self._lastDDRseq 
+
+        LinePutParam = tAlpLinePut(ALP_PUT_LINES, 
+                                  ct.c_long(PicOffset), 
+                                  ct.c_long(PicLoad), 
+                                  ct.c_long(LineOffset), 
+                                  ct.c_long(LineLoad))
+        
+            
+        if dataFormat == 'Python':  
+            pImageData = (ct.c_ubyte*imgData.size)()
+            for ind,x in enumerate(imgData):
+                pImageData[ind] = x
+        elif dataFormat == 'C':
+            pImageData = ct.cast(imgData,ct.c_void_p)  
+            
+    
+        
+        # BYREF???? CAST???
+        self._checkError(self._ALPLib.AlpSeqPutEx(self.ALP_ID,  SequenceId, LinePutParam, pImageData),'Cannot send image sequence to device.')
+
+    def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0, dataFormat = 'Python'):
         '''
         This  function  allows  loading user  supplied  data  via  the  USB  connection  into  the  ALP  memory  of  a 
         previously allocated sequence (AlpSeqAlloc) or a part of such a sequence. The loading operation can 
