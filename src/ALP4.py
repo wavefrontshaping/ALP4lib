@@ -277,7 +277,7 @@ class tAlpLinePut(ct.Structure):
                  ("LineOffset",ct.c_long),
                  ("LineLoad",ct.c_long)]
 
-ALP_PUT_LINES =     ct.c_ulong(1)
+ALP_PUT_LINES =     ct.c_long(1) # not ulong; need to be long in the tAlpLinePut struct
 
 
 ALP_ERRORS = {1001:'The specified ALP device has not been found or is not ready.',
@@ -517,10 +517,7 @@ class ALP4():
                 pImageData[ind] = x
         elif dataFormat == 'C':
             pImageData = ct.cast(imgData,ct.c_void_p)  
-            
-    
-        
-        # BYREF???? CAST???
+
         self._checkError(self._ALPLib.AlpSeqPutEx(self.ALP_ID,  SequenceId, LinePutParam, pImageData),'Cannot send image sequence to device.')
 
     def SeqPut(self, imgData, SequenceId = None, PicOffset = 0, PicLoad = 0, dataFormat = 'Python'):
