@@ -14,9 +14,8 @@ Please read the ALP API description provided with the [Vialux](http://www.vialux
 ## Requirements
 
 * Windows 32 or 64,
-* Vialux drivers and the ALP4.X dll files available for download on [Vialux website](http://www.vialux.de/en/).
-
-**Warning:** Still display issues with Python 3.X, a fix is on its way. 
+* Vialux drivers and the ALP4.X dll files available for download on [Vialux website](http://www.vialux.de/en/),
+* Compatible Python 2.7 and 3.X.
 
 ## Citing the code
 
