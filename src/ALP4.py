@@ -55,8 +55,10 @@ ALP_DMDTYPE_XGA_055A	 =  5 #	1024*768 mirror pixels (0.55" Type A, D4x00)
 ALP_DMDTYPE_XGA_055X	 =  6	#	1024*768 mirror pixels (0.55" Type X, D4x00) 
 ALP_DMDTYPE_WUXGA_096A =	   7	#	1920*1200 mirror pixels (0.96" Type A, D4100) 
 ALP_DMDTYPE_WQXGA_400MHZ_090A = 8 #	2560*1600 mirror pixels (0.90" Type A, DLPC910) at standard clock rate (400 MHz) 
-ALP_DMDTYPE_WQXGA_480MHZ_090A = 9 #	WQXGA at extended clock rate (480 MHz); WARNING: This mode requires temperature control of DMD 
-ALP_DMDTYPE_DISCONNECT = 255 #	behaves like 1080p (D4100) 
+ALP_DMDTYPE_WQXGA_480MHZ_090A = 9 #	WQXGA at extended clock rate (480 MHz); WARNING: This mode requires temperature control of DMD
+ALP_DMDTYPE_WXGA_S450 = 12 # # 1280x800 (DLP650LNIR WXGA S450)
+ALP_DMDTYPE_DISCONNECT = 255 #	behaves like 1080p (D4100)
+
 
 ALP_DEV_DISPLAY_HEIGHT = 2057	# number of mirror rows on the DMD 
 ALP_DEV_DISPLAY_WIDTH = 2058 # number of mirror columns on the DMD 
@@ -399,7 +401,10 @@ class ALP4():
             self.nSizeX = 1920; self.nSizeY = 1200
         elif (self.DMDType.value == ALP_DMDTYPE_WQXGA_400MHZ_090A or self.DMDType.value == ALP_DMDTYPE_WQXGA_480MHZ_090A):
             self.nSizeX = 2560; self.nSizeY = 1600
+        elif (self.DMDType.value == ALP_DMDTYPE_WXGA_S450):
+            self.nSizeX = 1280; self.nSizeY = 800
         else:
+            print("Unknown DMDtype with value ", self.DMDtype.value)
             self._raiseError("DMD Type not supported or unknown.")
 
         print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
