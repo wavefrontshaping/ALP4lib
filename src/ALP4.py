@@ -515,13 +515,14 @@ class ALP4():
                                   ct.c_long(LineOffset), 
                                   ct.c_long(LineLoad))
         
-            
-        if dataFormat == 'Python':  
-            pImageData = (ct.c_ubyte*imgData.size)()
-            for ind,x in enumerate(imgData):
-                pImageData[ind] = x
+        if dataFormat not in ['Python', 'C']:
+            raise ValueError('dataFormat must be one of "Python" or "C"')
+
+        if dataFormat == 'Python':
+            pImageData = imgData.astype(np.uint8).ctypes.data_as(ct.c_void_p)
         elif dataFormat == 'C':
-            pImageData = ct.cast(imgData,ct.c_void_p)  
+            pImageData = ct.cast(imgData,ct.c_void_p)
+
 
         self._checkError(self._ALPLib.AlpSeqPutEx(self.ALP_ID,  SequenceId, LinePutParam, pImageData),'Cannot send image sequence to device.')
 
@@ -570,15 +571,15 @@ class ALP4():
         
         See ALPLib.AlpSeqPut in the ALP API description for more information.
         '''
-        
+
+
         if not SequenceId:
             SequenceId = self._lastDDRseq 
-        
-            
-        if dataFormat == 'Python':  
-            pImageData = (ct.c_ubyte*imgData.size)()
-            for ind,x in enumerate(imgData):
-                pImageData[ind] = x
+        if dataFormat not in ['Python', 'C']:
+            raise ValueError('dataFormat must be one of "Python" or "C"')
+
+        if dataFormat == 'Python':
+            pImageData = imgData.astype(np.uint8).ctypes.data_as(ct.c_void_p)
         elif dataFormat == 'C':
             pImageData = ct.cast(imgData,ct.c_void_p)  
             
