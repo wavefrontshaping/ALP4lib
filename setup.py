@@ -11,7 +11,7 @@ if os.path.exists('README.txt'):
 
 setup(
     name="ALP4lib",
-    version="0.0.4",
+    version="1.0.0",
     author="Sebastien Popoff",
     author_email="sebastien.popoff@espci.fr",
     description=("A module to control Vialux DMDs based on ALP4.X API."
