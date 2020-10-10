@@ -3,6 +3,11 @@ ALP4lib is a Python module to control Vialux DMDs based on ALP4.X API.
 This is not an independant open source module, it uses the .ddl files provided by [Vialux](http://www.vialux.de/en/).
 This software is still experimental, use it at your own risk.
 
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4076193.svg)](https://doi.org/10.5281/zenodo.4076193)
+
+
 ## What is it?
 
 This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. 
