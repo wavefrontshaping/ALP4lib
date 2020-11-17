@@ -346,9 +346,9 @@ class ALP4(object):
             if (ct.sizeof(ct.c_voidp) == 8):  ## 64bit
                 libPath += 'x64/'
             elif not (ct.sizeof(ct.c_voidp) == 4):  ## 32bit
-                raise EnvironmentError('System not supported.')
+                raise OSError('System not supported.')
         else:
-            raise EnvironmentError('System not supported.')
+            raise OSError('System not supported.')
 
         if (version == '4.1'):
             libPath += 'alpD41.dll'
@@ -675,7 +675,7 @@ class ALP4(object):
         if (SequenceId is None) and (self._lastDDRseq):
             SequenceId = self._lastDDRseq
         if (SequenceId is None):
-            self._raiseError('No sequence to display.')
+            raise ValueError('No sequence to display.')
 
         if (synchDelay is None):
             synchDelay = ALP_DEFAULT
