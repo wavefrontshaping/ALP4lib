@@ -404,7 +404,7 @@ class ALP4():
         elif (self.DMDType.value == ALP_DMDTYPE_WXGA_S450):
             self.nSizeX = 1280; self.nSizeY = 800
         else:
-            print("Unknown DMDtype with value ", self.DMDtype.value)
+            print("Unknown DMDtype with value ", self.DMDType.value)
             self._raiseError("DMD Type not supported or unknown.")
 
         print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
