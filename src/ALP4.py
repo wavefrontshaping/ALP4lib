@@ -305,6 +305,9 @@ ALP_ERRORS = {1001: 'The specified ALP device has not been found or is not ready
               1019: 'Support in ALP drivers missing. Update drivers and power-cycle device.',
               1020: 'SDRAM Initialization failed.'}
 
+class ALPError(Exception):
+    def __init__(self, error_code):
+        super(ALPError, self).__init__(ALP_ERRORS[error_code])
 
 def afficheur(bitPlane):
     nSizeX = 2560
@@ -325,7 +328,7 @@ def afficheur(bitPlane):
     return display
 
 
-class ALP4():
+class ALP4(object):
     """
     This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
     """
@@ -342,9 +345,9 @@ class ALP4():
             if (ct.sizeof(ct.c_voidp) == 8):  ## 64bit
                 libPath += 'x64/'
             elif not (ct.sizeof(ct.c_voidp) == 4):  ## 32bit
-                self._raiseError('System not supported.')
+                raise EnvironmentError('System not supported.')
         else:
-            self._raiseError('System not supported.')
+            raise EnvironmentError('System not supported.')
 
         if (version == '4.1'):
             libPath += 'alpD41.dll'
@@ -369,11 +372,10 @@ class ALP4():
 
     def _checkError(self, returnValue, errorString, warning=False):
         if not (returnValue == ALP_OK):
-            errorMsg = errorString + '\n' + ALP_ERRORS[returnValue]
             if not warning:
-                raise Exception(errorMsg)
+                raise ALPError(returnValue)
             else:
-                print(errorMsg)
+                print(errorString + '\n' + ALP_ERRORS[returnValue])
 
     def Initialize(self, DeviceNum=None):
         '''
@@ -418,6 +420,7 @@ class ALP4():
             self.nSizeY = 800
         else:
             print("Unknown DMDtype with value ", self.DMDType.value)
+
             self._raiseError("DMD Type not supported or unknown.")
 
         print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
