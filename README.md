@@ -43,6 +43,17 @@ or
 easy_install ALP4lib
 ```
 
+### Installation from source (Github)
+To install the latest version from Github, clone the repository, and install the package with the the following command.
+```shell script
+python setup.py install
+```
+Instead of the normal installation, if you want to install ALP4lib in [development mode](https://setuptools.readthedocs.io/en/latest/userguide/development_mode.html), use:
+```shell script
+python setup.py develop
+```
+
+
 ## Copy the .dll
 
 The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
