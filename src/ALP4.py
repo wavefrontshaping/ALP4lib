@@ -645,7 +645,7 @@ class ALP4(object):
                   Array (nSizeX x nSizeY)/8
 
 
-		 """
+        """
         bitPlane = [0] * (self.nSizeX * self.nSizeY // 8)
         for ind, value in enumerate(imgArray):
             bitPlane[(ind - ind % 8) // 8] += (2 ** (7 - ind % 8)) * ((int(value) >> bitShift) % 2)
