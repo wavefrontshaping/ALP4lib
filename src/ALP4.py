@@ -9,6 +9,11 @@ Created on Wed Oct 05 15:48:53 2016
 import ctypes as ct
 import platform
 import numpy as np
+import six
+if six.PY3:
+    import winreg as _winreg
+else:
+    import _winreg
 
 ## Standard parameter
 ALP_DEFAULT = 0
@@ -334,9 +339,18 @@ class ALP4(object):
     This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
     """
 
-    def __init__(self, version='4.3', libDir='./'):
+    def __init__(self, version='4.3', libDir=None):
 
         os_type = platform.system()
+
+        if libDir is None:
+            try:
+                reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
+                key = _winreg.OpenKey(reg, r"SOFTWARE\ViALUX\ALP-" + version)
+                libDir = (_winreg.QueryValueEx(key, "Path"))[0] + "/ALP-{0} API/".format(version)
+            except EnvironmentError:
+                raise ValueError("Cannot auto detect libDir! Please specify it manually.")
+
         if libDir.endswith('/'):
             libPath = libDir
         else:
@@ -587,13 +601,13 @@ class ALP4(object):
 
         if not SequenceId:
             SequenceId = self._lastDDRseq
-        if dataFormat not in ['Python', 'C']:
-            raise ValueError('dataFormat must be one of "Python" or "C"')
 
         if dataFormat == 'Python':
             pImageData = imgData.astype(np.uint8).ctypes.data_as(ct.c_void_p)
         elif dataFormat == 'C':
             pImageData = ct.cast(imgData, ct.c_void_p)
+        else:
+            raise ValueError('dataFormat must be one of "Python" or "C"')
 
         self._checkError(
             self._ALPLib.AlpSeqPut(self.ALP_ID, SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),
