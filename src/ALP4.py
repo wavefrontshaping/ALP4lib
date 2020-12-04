@@ -409,31 +409,18 @@ class ALP4(object):
             DeviceNum = ct.c_long(ALP_DEFAULT)
 
         self._checkError(self._ALPLib.AlpDevAlloc(DeviceNum, ALP_DEFAULT, ct.byref(self.ALP_ID)), 'Cannot open DMD.')
-
         self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, ALP_DEV_DMDTYPE, ct.byref(self.DMDType)),
                          'Inquery fails.')
 
-        if (self.DMDType.value == ALP_DMDTYPE_XGA or self.DMDType.value == ALP_DMDTYPE_XGA_055A or self.DMDType.value == ALP_DMDTYPE_XGA_055X or self.DMDType.value == ALP_DMDTYPE_XGA_07A):
-            self.nSizeX = 1024
-            self.nSizeY = 768
-        elif (self.DMDType.value == ALP_DMDTYPE_SXGA_PLUS):
-            self.nSizeX = 1400
-            self.nSizeY = 1050
-        elif (self.DMDType.value == ALP_DMDTYPE_DISCONNECT or self.DMDType.value == ALP_DMDTYPE_1080P_095A):
-            self.nSizeX = 1920
-            self.nSizeY = 1080
-        elif (self.DMDType.value == ALP_DMDTYPE_WUXGA_096A):
-            self.nSizeX = 1920
-            self.nSizeY = 1200
-        elif (self.DMDType.value == ALP_DMDTYPE_WQXGA_400MHZ_090A or self.DMDType.value == ALP_DMDTYPE_WQXGA_480MHZ_090A):
-            self.nSizeX = 2560
-            self.nSizeY = 1600
-        elif (self.DMDType.value == ALP_DMDTYPE_WXGA_S450):
-            self.nSizeX = 1280
-            self.nSizeY = 800
-        else:
-            print("Unknown DMDtype with value ", self.DMDType.value)
-            raise EnvironmentError("DMD Type not supported or unknown.")
+        nSizeX = ct.c_long(0)
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, ALP_DEV_DISPLAY_WIDTH, ct.byref(nSizeX)),
+                         'Inquery ALP_DEV_DISPLAY_WIDTH fails.')
+        self.nSizeX = nSizeX.value
+
+        nSizeY = ct.c_long(0)
+        self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, ALP_DEV_DISPLAY_HEIGHT, ct.byref(nSizeY)),
+                         'Inquery ALP_DEV_DISPLAY_HEIGHT fails.')
+        self.nSizeY = nSizeY.value
 
         print('DMD found, resolution = ' + str(self.nSizeX) + ' x ' + str(self.nSizeY) + '.')
 
