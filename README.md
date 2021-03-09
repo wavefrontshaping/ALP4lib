@@ -1,7 +1,7 @@
 # ALP4lib
 ALP4lib is a Python module to control Vialux DMDs based on ALP4.X API.
 This is not an independant open source module, it uses the .ddl files provided by [Vialux](http://www.vialux.de/en/).
-This software is still experimental, use it at your own risk.
+This software is experimental, use it at your own risk.
 
 ## What is it?
 
@@ -56,7 +56,8 @@ python setup.py develop
 
 ## Copy the .dll
 
-The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
+The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. 
+Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
 The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
 
 ## A simple example
