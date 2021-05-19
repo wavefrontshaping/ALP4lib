@@ -146,6 +146,12 @@ ALP_FLUT_OFFSET9 = 2122  # Determine offset of FLUT index; default=0
 
 ALP_SEQ_DMD_LINES = 2125  # Area of Interest: Value = MAKELONG(StartRow, RowCount)
 
+ALP_X_SHEAR_SELECT = 2132 # ALP_DEFAULT or ALP_ENABLE
+
+ALP_DMD_MASK_SELECT = 2134 # ALP_DEFAULT or ALP_ENABLE, ALP_DMD_MASK_16X8 
+ALP_DMD_MASK_16X16 = ALP_ENABLE
+ALP_DMD_MASK_16X8 = 2 # XGA only
+
 
 def MAKELONG(StartRow, RowCount):
     return StartRow + RowCount << 16
@@ -227,6 +233,19 @@ class tFlutWrite(ct.Structure):
                 # extracts 9 or 18 least significant bits from each entry.
                 ("FrameNumbers", ct.c_ulong * 4096)]
 
+ALP_X_SHEAR = 2337 # use AlpProjControlEx and UserStructPtr of type tAlpShearTable 
+class tAlpShearTable(ct.Structure):	# AlpProjControlEx, ControlType ALP_X_SHEAR 
+    _fields_ = [("nOffset", ct.c_long),
+                ("nSize", ct.c_long),
+                ("nShiftDistance", ct.c_long * 2048)] # values range from 0 to 511
+
+
+ALP_DMD_MASK_WRITE = 2339 # use AlpProjControlEx and UserStructPtr of type tAlpDmdMask 
+
+class tAlpDmdMask(ct.Structure): # AlpProjControlEx, ControlType ALP_DMD_MASK_WRITE 
+    _fields_ = [("nRowOffset", ct.c_long), # Bitmap position in a 16x16 mask, ALP_DEFAULT=0
+                ("nRowCount", ct.c_long), # rows to be written or ALP_DEFAULT (full DMD 16x16 mask)
+                ("Bitmap", ct.c_ubyte * 2048)] # each bit controls a block of DMD pixels
 
 ## Sequence Queue API Extension:
 ALP_PROJ_QUEUE_MODE = 2314
