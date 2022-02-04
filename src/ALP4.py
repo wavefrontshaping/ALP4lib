@@ -15,7 +15,7 @@ if six.PY3:
 else:
     import _winreg
 
-from header import *
+from .header import *
 
 
 class ALPError(Exception):
