@@ -17,6 +17,7 @@ else:
 
 # Standard parameter
 ALP_DEFAULT = 0
+ALP_ENABLE = 1
 
 ## Return codes
 ALP_OK = 0x00000000  # Successfull execution
