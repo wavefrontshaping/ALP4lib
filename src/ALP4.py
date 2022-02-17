@@ -743,10 +743,10 @@ class ALP4(object):
 
         """
 
-        ret = ct.c_double(0)
+        ret = ct.c_long(0)
 
         self._checkError(self._ALPLib.AlpDevInquire(self.ALP_ID, inquireType, ct.byref(ret)), 'Error sending request.')
-        return ret.value()
+        return ret.value
 
     def SeqInquire(self, inquireType, SequenceId=None):
         """
