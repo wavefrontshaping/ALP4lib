@@ -10,7 +10,7 @@ if os.path.exists('README.txt'):
 
 setup(
     name="ALP4lib",
-    version="1.0.0",
+    version="1.0.1",
     author="Sebastien Popoff",
     author_email="sebastien.popoff@espci.fr",
     description=("A module to control Vialux DMDs based on ALP4.X API."
@@ -28,5 +28,12 @@ setup(
         "Intended Audience :: Education",
         "Topic :: Scientific/Engineering",
         "License :: OSI Approved :: MIT License",
+    ],
+    install_requires=[
+        'numpy',
+        'matplotlib',
+        'scipy',
+        'numba',
+        'joblib'
     ],
 )
