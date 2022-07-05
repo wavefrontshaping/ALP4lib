@@ -30,10 +30,6 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     install_requires=[
-        'numpy',
-        'matplotlib',
-        'scipy',
-        'numba',
-        'joblib'
+        'numpy'
     ],
 )
