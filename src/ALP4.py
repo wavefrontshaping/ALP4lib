@@ -168,7 +168,7 @@ ALP_DMD_MASK_16X8 = 2  # XGA only
 
 
 def MAKELONG(StartRow, RowCount):
-    return StartRow + RowCount << 16
+    return StartRow + (RowCount << 16)
 
 
 #  AlpSeqInquire
