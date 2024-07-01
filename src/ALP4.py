@@ -458,6 +458,10 @@ class ALP4(object):
             libPath += "alpV42.dll"
         elif version == "4.3":
             libPath += "alp4395.dll"
+        elif version == "4.4":
+            libPath += "Alp44.dll"
+        else:
+            raise ValueError("Version not supported.")
 
         print("Loading library: " + libPath)
 
