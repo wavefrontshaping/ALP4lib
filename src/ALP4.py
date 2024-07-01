@@ -433,7 +433,7 @@ class ALP4(object):
                 key = _winreg.OpenKey(reg, r"SOFTWARE\ViALUX\ALP-" + version)
                 libDir = (_winreg.QueryValueEx(key, "Path"))[
                     0
-                ] + "/ALP-{0} API/".format(version)
+                ] + "/ALP-{0} high-speed API/".format(version)
             except EnvironmentError:
                 raise ValueError(
                     "Cannot auto detect libDir! Please specify it manually."
