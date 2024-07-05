@@ -411,7 +411,7 @@ def afficheur(bitPlane):
     return display
 
 
-def img_to_bitplane(imgArray, bitShift):
+def img_to_bitplane(imgArray):
     """
     Convert a binary image into a bitplane.
     """
