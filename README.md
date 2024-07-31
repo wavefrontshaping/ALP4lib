@@ -121,12 +121,9 @@ dmd.SeqAlloc(nbImg = imgSeq.shape[0], bitDepth = 8)
 dmd.SeqPut(imgData = imgSeq)
 
 # set to 50Hz
-# If you set fraction to 1, then the DMD misses the triggers sometimes because
-# the DMD switches to the next image only if the pictureTime is over.
-# so it shows an image for the pictureTime, blanks the DMD and waits for the trigger
-# to show the next image.
-fraction = 0.95
-dmd.SetTiming(pictureTime = round(0.05*1_000_000 * fraction))
+# subtract 50µs because if the pictureTime is roughly the same time
+# as the time between two triggers, sometime some triggers are missed  
+dmd.SetTiming(pictureTime = round(0.05*1_000_000) - 10)
 
 # DMD listens to trigger
 dmd.ProjControl(ALP_PROJ_MODE, ALP_SLAVE)
