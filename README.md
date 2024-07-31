@@ -121,7 +121,7 @@ dmd.SeqAlloc(nbImg = imgSeq.shape[0], bitDepth = 8)
 dmd.SeqPut(imgData = imgSeq)
 
 # set to 50Hz
-# subtract 50µs because if the pictureTime is roughly the same time
+# subtract 10µs because if the pictureTime is roughly the same time
 # as the time between two triggers, sometime some triggers are missed  
 dmd.SetTiming(pictureTime = round(0.05*1_000_000) - 10)
 
