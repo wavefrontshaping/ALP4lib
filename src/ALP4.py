@@ -953,20 +953,18 @@ class ALP4(object):
         )
         return ret.value
 
-    def ProjInquireEx(self, inquireType, SequenceId=None):
+    def ProjInquireEx(self, inquireType):
         """
         Data objects that do not fit into a simple 32-bit number can be inquired using this function.
         Meaning and layout of the data depend on the InquireType.
 
-        Usage: ProjInquireEx(self, inquireType, UserStructPtr, SequenceId = None)
+        Usage: ProjInquireEx(self, inquireType, UserStructPtr)
 
         PARAMETERS
         ----------
 
         inquireType : ctypes c_ulong
                       Sepcifies the type of value to return.
-        SequenceId : ctypes c_long, optional
-                     Identified of the sequence. If not specified, set the last sequence allocated in the DMD board memory
 
         RETURNS
         -------
@@ -981,12 +979,9 @@ class ALP4(object):
         """
         UserStructPtr = ct.c_double(0)
 
-        if (SequenceId is None) and (self._lastDDRseq):
-            SequenceId = self._lastDDRseq
-
         self._checkError(
             self._ALPLib.AlpProjInquire(
-                self.ALP_ID, SequenceId, inquireType, ct.byref(UserStructPtr)
+                self.ALP_ID, inquireType, ct.byref(UserStructPtr)
             ),
             "Error sending request.",
         )
