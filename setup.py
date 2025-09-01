@@ -12,7 +12,7 @@ if os.path.exists("README.txt"):
 
 setup(
     name="ALP4lib",
-    version="1.0.2",
+    version="1.0.3",
     author="Sebastien Popoff",
     author_email="sebastien.popoff@espci.fr",
     description=(
