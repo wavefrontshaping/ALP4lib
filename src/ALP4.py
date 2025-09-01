@@ -662,7 +662,10 @@ class ALP4(object):
             raise ValueError('dataFormat must be one of "Python" or "C"')
 
         if dataFormat == "Python":
-            pImageData = imgData.astype(np.uint8).ctypes.data_as(ct.c_void_p)
+            temp = imgData.astype(np.uint8)
+            pImageData = temp.ctypes.data_as(ct.c_void_p)
+            # keep the temp array in memory using a temporary variable
+            # See (https://github.com/wavefrontshaping/ALP4lib/issues/29)
         elif dataFormat == "C":
             pImageData = ct.cast(imgData, ct.c_void_p)
 
@@ -723,7 +726,10 @@ class ALP4(object):
             SequenceId = self._lastDDRseq
 
         if dataFormat == "Python":
-            pImageData = imgData.astype(np.uint8).ctypes.data_as(ct.c_void_p)
+            temp = imgData.astype(np.uint8)
+            pImageData = temp.ctypes.data_as(ct.c_void_p)
+            # keep the temp array in memory using a temporary variable
+            # See (https://github.com/wavefrontshaping/ALP4lib/issues/29)
         elif dataFormat == "C":
             pImageData = ct.cast(imgData, ct.c_void_p)
         else:
