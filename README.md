@@ -54,7 +54,7 @@ python setup.py develop
 ```
 
 
-## Copy the .dll
+## Copy the .dll/.so
 
 The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. 
 Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 

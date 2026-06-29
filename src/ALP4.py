@@ -11,10 +11,14 @@ import platform
 import numpy as np
 import six
 
-if six.PY3:
-    import winreg as _winreg
-else:
-    import _winreg
+# winreg is Windows-only; it is used to auto-detect the ALP library path from
+# the registry. On other platforms (e.g. Linux) it is neither available nor
+# needed, so the import is skipped.
+if platform.system() == "Windows":
+    if six.PY3:
+        import winreg as _winreg
+    else:
+        import _winreg
 
 # Standard parameter
 ALP_DEFAULT = 0
@@ -428,13 +432,18 @@ class ALP4(object):
         os_type = platform.system()
 
         if libDir is None:
-            try:
-                reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
-                key = _winreg.OpenKey(reg, r"SOFTWARE\ViALUX\ALP-" + version)
-                libDir = (_winreg.QueryValueEx(key, "Path"))[
-                    0
-                ] + "/ALP-{0} high-speed API/".format(version)
-            except EnvironmentError:
+            if os_type == "Windows":
+                try:
+                    reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
+                    key = _winreg.OpenKey(reg, r"SOFTWARE\ViALUX\ALP-" + version)
+                    libDir = (_winreg.QueryValueEx(key, "Path"))[
+                        0
+                    ] + "/ALP-{0} high-speed API/".format(version)
+                except EnvironmentError:
+                    raise ValueError(
+                        "Cannot auto detect libDir! Please specify it manually."
+                    )
+            else:
                 raise ValueError(
                     "Cannot auto detect libDir! Please specify it manually."
                 )
@@ -443,25 +452,37 @@ class ALP4(object):
             libPath = libDir
         else:
             libPath = libDir + "/"
-            ## Load the ALP dll
+
+        ## Load the ALP library (.dll on Windows, .so on Linux)
         if os_type == "Windows":
             if ct.sizeof(ct.c_voidp) == 8:  ## 64bit
                 libPath += "x64/"
             elif not (ct.sizeof(ct.c_voidp) == 4):  ## 32bit
                 raise OSError("System not supported.")
+
+            if version == "4.1":
+                libPath += "alpD41.dll"
+            elif version == "4.2":
+                libPath += "alpV42.dll"
+            elif version == "4.3":
+                libPath += "alp4395.dll"
+            elif version == "4.4":
+                libPath += "Alp44.dll"
+            else:
+                raise ValueError("Version not supported.")
+        elif os_type == "Linux":
+            if version == "4.1":
+                libPath += "libalp41.so"
+            elif version == "4.2":
+                libPath += "libalp42.so"
+            elif version == "4.3":
+                libPath += "libalp43.so"
+            elif version == "4.4":
+                libPath += "libalp44.so"
+            else:
+                raise ValueError("Version not supported.")
         else:
             raise OSError("System not supported.")
-
-        if version == "4.1":
-            libPath += "alpD41.dll"
-        elif version == "4.2":
-            libPath += "alpV42.dll"
-        elif version == "4.3":
-            libPath += "alp4395.dll"
-        elif version == "4.4":
-            libPath += "Alp44.dll"
-        else:
-            raise ValueError("Version not supported.")
 
         print("Loading library: " + libPath)
 
