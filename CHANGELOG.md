@@ -1,5 +1,17 @@
 
 
+## 1.1.0
+
+### Added
+- Linux support: load the ALP shared library (`libalpXX.so`) instead of the Windows `.dll` when running on Linux
+- Default `libDir` on Linux is `/usr/lib/x86_64-linux-gnu/` when not specified
+- Support for ALP API versions 5.0 and 5.1 on Linux (`libalp50.so`, `libalp51.so`)
+
+### Changed
+- `winreg` is only imported on Windows, so the module can be imported on other platforms
+- Unsupported OS now raises `OSError` after the library path is resolved; unsupported ALP version raises `ValueError` on both platforms
+- README section renamed to "Copy the .dll/.so"
+
 ## 1.0.3
 
 
