@@ -481,6 +481,10 @@ class ALP4(object):
                 libPath += "libalp43.so"
             elif version == "4.4":
                 libPath += "libalp44.so"
+            elif version == "5.0":
+                libPath += "libalp50.so"
+            elif version == "5.1":
+                libPath += "libalp51.so"
             else:
                 raise ValueError("Version not supported.")
         else:
