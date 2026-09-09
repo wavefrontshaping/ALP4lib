@@ -443,6 +443,8 @@ class ALP4(object):
                     raise ValueError(
                         "Cannot auto detect libDir! Please specify it manually."
                     )
+            elif os_type == "Linux":
+                libDir = "/usr/lib/x86_64-linux-gnu/"
             else:
                 raise ValueError(
                     "Cannot auto detect libDir! Please specify it manually."
