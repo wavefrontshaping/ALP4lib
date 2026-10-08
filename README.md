@@ -38,7 +38,11 @@ pip install ALP4lib
 ```
 
 ### Installation from source (Github)
-To install the latest version from Github, clone the repository, and install the package with the following command.
+To install the latest version directly from Github without cloning, run:
+```shell script
+pip install git+https://github.com/wavefrontshaping/ALP4lib.git
+```
+Alternatively, clone the repository and install the package with the following command.
 ```shell script
 pip install .
 ```
