@@ -1,20 +1,20 @@
 # ALP4lib
-ALP4lib is a Python module to control Vialux DMDs based on ALP4.X API.
-This is not an independant open source module, it uses the .ddl files provided by [Vialux](http://www.vialux.de/en/).
+ALP4lib is a Python module to control Vialux DMDs based on ALP4.X and ALP5.X API.
+This is not an independant open source module, it uses the .dll (Windows) or .so (Linux) files provided by [Vialux](http://www.vialux.de/en/).
 This software is experimental, use it at your own risk.
 
 ## What is it?
 
-This module wraps the basic function of the Vialux dlls to control a digitial micro-mirror device with a Vialux board. 
-Vialux provides dlls and also modules for Matlab and Labview but not for Python. 
-This code is tested with a device using the 4.3 version of the ALP API, other versions may have issues.
+This module wraps the basic function of the Vialux libraries to control a digitial micro-mirror device with a Vialux board. 
+Vialux provides dlls (Windows) and shared libraries (Linux), and also modules for Matlab and Labview but not for Python. 
+This code is tested with a device using the 4.3 version of the ALP API on Windows and Linux, other versions may have issues.
 LED control related functions are not implemented.
 Please read the ALP API description provided with the [Vialux](http://www.vialux.de/en/) ALP installation.
 
 ## Requirements
 
-* Windows 32 or 64,
-* Vialux drivers and the ALP4.X dll files available for download on [Vialux website](http://www.vialux.de/en/),
+* Windows 32 or 64, or Linux x86_64,
+* Vialux drivers and the ALP4.X or ALP5.X dll files (Windows) or the ALP shared libraries (Linux) available for download on [Vialux website](http://www.vialux.de/en/),
 * Compatible Python 2.7 and 3.X.
 
 ## Citing the code
@@ -54,11 +54,32 @@ python setup.py develop
 ```
 
 
-## Copy the .dll
+## Copy the .dll/.so
 
-The win32 ALPX.dll files should be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. 
-Alternatively, a different dll directory can be set at the initialization of the DMD handler object. 
-The dlls have the following names respectively for the 4.1, 4.2 and 4.3 versions of the ALP API: 'alp41.dll', 'alp42.dll' and 'alp4395.dll'. 
+### Windows
+
+The win32 ALPX.dll files could be directly in the working directory and the win64 dll with the same name in a /x64 subfolder. 
+If no directory is given, the module reads the ALP installation path from the Windows registry and looks for the API folder
+(`ALP-4.X high-speed API` for ALP 4.X, `ALP-5.X API` for ALP 5.X, e.g. `C:\Program Files\ALP-5.0\ALP-5.0 API\`).
+Alternatively, a different dll directory can be set at the initialization of the DMD handler object with the `libDir` argument. 
+The dlls have the following names respectively for the 4.1, 4.2, 4.3, 4.4, 5.0 and 5.1 versions of the ALP API: 'alpD41.dll', 'alpV42.dll', 'alp4395.dll', 'Alp44.dll', 'alp50.dll' and 'alp51.dll'. 
+
+### Linux
+
+Install the Vialux Linux drivers and ALP shared libraries following the Vialux documentation.
+By default, the module looks for the library in `/usr/lib/x86_64-linux-gnu/`.
+A different directory can be set at the initialization of the DMD handler object with the `libDir` argument.
+The shared libraries have the following names for the 4.1, 4.2, 4.3, 4.4, 5.0 and 5.1 versions of the ALP API: 'libalp41.so', 'libalp42.so', 'libalp43.so', 'libalp44.so', 'libalp50.so' and 'libalp51.so'.
+
+```python
+from ALP4 import *
+
+# Default library directory (/usr/lib/x86_64-linux-gnu/ on Linux)
+DMD = ALP4(version = '4.3')
+
+# Custom library directory
+DMD = ALP4(version = '4.3', libDir = '/opt/vialux/lib/')
+```
 
 ## A simple example
 
@@ -67,7 +88,7 @@ import numpy as np
 from ALP4 import *
 import time
 
-# Load the Vialux .dll
+# Load the Vialux library (.dll on Windows, .so on Linux)
 DMD = ALP4(version = '4.3')
 # Initialize the device
 DMD.Initialize()
