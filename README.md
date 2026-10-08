@@ -37,20 +37,14 @@ To automatically download and copy the module in the python directory (so it can
 pip install ALP4lib
 ```
 
-or 
-
-```shell
-easy_install ALP4lib
-```
-
 ### Installation from source (Github)
-To install the latest version from Github, clone the repository, and install the package with the the following command.
+To install the latest version from Github, clone the repository, and install the package with the following command.
 ```shell script
-python setup.py install
+pip install .
 ```
-Instead of the normal installation, if you want to install ALP4lib in [development mode](https://setuptools.readthedocs.io/en/latest/userguide/development_mode.html), use:
+Instead of the normal installation, if you want to install ALP4lib in [development mode](https://setuptools.pypa.io/en/latest/userguide/development_mode.html), use:
 ```shell script
-python setup.py develop
+pip install -e .
 ```
 
 

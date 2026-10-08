@@ -12,6 +12,9 @@
 - `winreg` is only imported on Windows, so the module can be imported on other platforms
 - Unsupported OS now raises `OSError` after the library path is resolved; unsupported ALP version raises `ValueError` on both platforms
 - README section renamed to "Copy the .dll/.so"
+- Packaging moved from `setup.py` to `pyproject.toml` (PEP 621); install with `pip install .` or `pip install -e .`
+- Dependencies reduced to `numpy` and `six` (the only modules imported); `matplotlib`, `scipy`, `numba` and `joblib` are no longer pulled in
+- Python 2 is no longer supported by the packaging; `requires-python = ">=3.7"`
 
 ## 1.0.3
 

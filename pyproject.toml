@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ALP4lib"
+version = "1.1.0"
+description = "A module to control Vialux DMDs based on the ALP 4.X and 5.X API. It uses the .dll/.so files provided by Vialux."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Sebastien Popoff", email = "sebastien.popoff@espci.fr" }]
+keywords = ["DMD", "Vialux", "ALP", "DLP"]
+requires-python = ">=3.7"
+dependencies = ["numpy", "six"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
+
+[project.urls]
+Homepage = "https://github.com/wavefrontshaping/ALP4lib"
+Repository = "https://github.com/wavefrontshaping/ALP4lib"
+Changelog = "https://github.com/wavefrontshaping/ALP4lib/blob/master/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+py-modules = ["ALP4"]
