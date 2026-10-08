@@ -357,19 +357,24 @@ ALP_FLAG_RSVD0 = ct.c_ulong(16)  # reserved
 
 # for AlpSeqPutEx():
 class tAlpLinePut(ct.Structure):
+    # alp.h declares these as int32_t. Must be ct.c_int32, NOT ct.c_long:
+    # on 64-bit Linux (LP64) c_long is 8 bytes, so the struct would be 40 bytes
+    # instead of 20, the library would misread the members (PicLoad decodes to 0
+    # => zero pictures loaded => nothing written), and AlpSeqPutEx would silently
+    # do nothing. On Windows c_long is 32-bit, so the old code happened to work.
     _fields_ = [
         (
             "TransferMode",
-            ct.c_long,
+            ct.c_int32,
         ),  # common first member of AlpSeqPutEx' UserStructPtr argument
-        ("PicOffset", ct.c_long),
-        ("PicLoad", ct.c_long),
-        ("LineOffset", ct.c_long),
-        ("LineLoad", ct.c_long),
+        ("PicOffset", ct.c_int32),
+        ("PicLoad", ct.c_int32),
+        ("LineOffset", ct.c_int32),
+        ("LineLoad", ct.c_int32),
     ]
 
 
-ALP_PUT_LINES = ct.c_long(1)  # not ulong; need to be long in the tAlpLinePut struct
+ALP_PUT_LINES = 1  # tAlpLinePut.TransferMode (int32_t)
 
 ALP_ERRORS = {
     1001: "The specified ALP device has not been found or is not ready.",
@@ -687,10 +692,10 @@ class ALP4(object):
 
         LinePutParam = tAlpLinePut(
             ALP_PUT_LINES,
-            ct.c_long(PicOffset),
-            ct.c_long(PicLoad),
-            ct.c_long(LineOffset),
-            ct.c_long(LineLoad),
+            int(PicOffset),
+            int(PicLoad),
+            int(LineOffset),
+            int(LineLoad),
         )
 
         if dataFormat not in ["Python", "C"]:
@@ -705,7 +710,12 @@ class ALP4(object):
             pImageData = ct.cast(imgData, ct.c_void_p)
 
         self._checkError(
-            self._ALPLib.AlpSeqPutEx(self.ALP_ID, SequenceId, LinePutParam, pImageData),
+            # Pass the tAlpLinePut struct BY POINTER (ct.byref). The C signature
+            # expects `void *UserStructPtr`; passing the Structure by value only
+            # worked on the Windows x64 ABI (which passes large structs by hidden
+            # reference) and corrupted the call on the Linux System V ABI
+            # (struct goes on the stack -> register shift -> ALP_PARM_INVALID).
+            self._ALPLib.AlpSeqPutEx(self.ALP_ID, SequenceId, ct.byref(LinePutParam), pImageData),
             "Cannot send image sequence to device.",
         )
 
