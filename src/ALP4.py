@@ -425,7 +425,7 @@ def img_to_bitplane(imgArray):
 
 class ALP4(object):
     """
-    This class controls a Vialux DMD board based on the Vialux ALP 4.X API.
+    This class controls a Vialux DMD board based on the Vialux ALP 4.X or 5.X API.
     """
 
     def __init__(self, version="4.3", libDir=None):
@@ -436,9 +436,13 @@ class ALP4(object):
                 try:
                     reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
                     key = _winreg.OpenKey(reg, r"SOFTWARE\ViALUX\ALP-" + version)
-                    libDir = (_winreg.QueryValueEx(key, "Path"))[
-                        0
-                    ] + "/ALP-{0} high-speed API/".format(version)
+                    alpPath = (_winreg.QueryValueEx(key, "Path"))[0]
+                    if version.startswith("5."):
+                        # ALP-5.x: <install dir>/ALP-5.x API/
+                        libDir = alpPath + "/ALP-{0} API/".format(version)
+                    else:
+                        # ALP-4.x: <install dir>/ALP-4.x high-speed API/
+                        libDir = alpPath + "/ALP-{0} high-speed API/".format(version)
                 except EnvironmentError:
                     raise ValueError(
                         "Cannot auto detect libDir! Please specify it manually."
@@ -470,6 +474,10 @@ class ALP4(object):
                 libPath += "alp4395.dll"
             elif version == "4.4":
                 libPath += "Alp44.dll"
+            elif version == "5.0":
+                libPath += "alp50.dll"
+            elif version == "5.1":
+                libPath += "alp51.dll"
             else:
                 raise ValueError("Version not supported.")
         elif os_type == "Linux":
